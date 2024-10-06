@@ -114,6 +114,43 @@ def plot_all_times_for_layer(patient_id, layer_index):
     plt.tight_layout()
     plt.show()
 
+def plot_mat_resultat(data, time_index):
+    # Nombre de couches
+    num_layers = data.shape[-1]  # Accéder à la dimension des couches
+
+    # Calculer les dimensions de la grille (par exemple 3x3, 4x4 selon le nombre de couches)
+    cols = int(np.ceil(np.sqrt(num_layers)))  # Nombre de colonnes (racine carrée du nombre de couches)
+    rows = int(np.ceil(num_layers / cols))  # Nombre de lignes
+
+    # Créer une figure avec plusieurs sous-graphes en grille
+    fig, axes = plt.subplots(rows, cols, figsize=(10, 10))
+
+    for layer_index in range(num_layers):
+        # Extraire l'image spécifique pour le temps et la couche donnés
+        image_to_plot = data[time_index, :, :, :,layer_index]  # (temps, x, y, couche, RGB)
+
+        # Vérifier que l'image a la forme correcte
+        if image_to_plot.shape != (data.shape[1], data.shape[2], 3):
+            print(f"Image shape: {image_to_plot.shape}")
+            raise ValueError("L'image extraite n'a pas la forme attendue (hauteur, largeur, 3).")
+
+        # Déterminer la position dans la grille
+        row = layer_index // cols
+        col = layer_index % cols
+
+        # Afficher l'image dans la sous-figure correspondante
+        axes[row, col].imshow(image_to_plot, vmin=0, vmax=1)  # Ajuster les valeurs d'affichage
+        axes[row, col].set_title(f'Layer {layer_index}')
+        axes[row, col].axis('off')  # Cacher les axes
+
+    # Supprimer les axes vides s'il y a moins d'images que de sous-graphes
+    for i in range(layer_index + 1, rows * cols):
+        fig.delaxes(axes.flatten()[i])
+
+    # Ajuster la disposition des sous-graphes
+    plt.tight_layout()
+    plt.show()
+
 def patient_info(patient_id):
     if int(patient_id) < 101:
         filename = f"../database/training/patient{patient_id}/Info.cfg"
@@ -167,10 +204,7 @@ def hough_transform(image,show=True):
 
     # Afficher l'image avec les cercles
     if show:
-        plt.imshow(blurred_image, cmap='gray')
-        plt.title("Hough Transform on Image with Detected Circles")
-        plt.axis('off')
-        plt.show()
+        set_pixel_red(blurred_image, seed_points[0][0], seed_points[0][1],show)
     # Retourner l'image avec les cercles et les seed points
     return blurred_image, seed_points
 
@@ -190,7 +224,7 @@ def absolute_difference_Ed_ES(patient_id,slice_index):
     
     return abs_diff
 
-def set_pixel_red(image_gray, x, y):
+def set_pixel_red(image_gray, x, y,show=False):
     """
     Met le pixel (x, y) en rouge dans une image en niveaux de gris.
 
@@ -211,12 +245,16 @@ def set_pixel_red(image_gray, x, y):
     image_rgb[y+1,x]=[255,0,0]
     image_rgb[y,x-1]=[255,0,0]
     image_rgb[y-1,x]=[255,0,0]
-    plt.imshow(image_rgb)
-    plt.axis('off')
-    plt.show()
+    if show:
+        plt.imshow(image_rgb)
+        plt.axis('off')
+        plt.show()
+    return image_rgb
 
-def step_1(patient_id):
 
+
+
+def step_1(patient_id,show=False):
     def energy(p,sigma,mean,p_CoG,intensity,w=11):
         return np.sqrt((2*sigma/(w-1)*np.sqrt((p[0]-p_CoG[0])**2+p[0]-p_CoG[0])**2)**2 + (intensity-mean)**2)
 
@@ -227,31 +265,49 @@ def step_1(patient_id):
     else:
         print("Patient ID must be between 001 et 150.")
         return
+    
     data=image.data.numpy()
+    matrice_image=np.zeros((data.shape[0],data.shape[1],data.shape[2],3,data.shape[3]))
     middle_slice_index = image.shape[-1] // 2
     abs_diff=absolute_difference_Ed_ES(patient_id, middle_slice_index)
-    image_with_circles, seed_points = hough_transform(abs_diff, show=False)
-    if len(seed_points) > 1:
+    image_with_circles, initial_seed_point = hough_transform(abs_diff, show)
+
+    if len(initial_seed_point) > 1:
         print("Plusieurs cercles détécté.")
         return
-    t_ED=patient_info(patient_id)["ED"]
-    t_ES=patient_info(patient_id)["ES"]
-    seed_points={(t_ED,middle_slice_index):seed_points[0],(t_ES,middle_slice_index):seed_points[0]}
+    t_ED=patient_info(patient_id)["ED"]-1
+    t_ES=patient_info(patient_id)["ES"]-1
+    seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
     center_x,center_y=seed_points[(t_ED,middle_slice_index)]
-    set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y)
-    for slice in range(middle_slice_index+1,data.shape[-1]):
+    matrice_image[t_ED,:,:,:,middle_slice_index]=set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y,show)
+
+    to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
+    while to_process:
+        current_time, current_slice = to_process.pop(0)
+        print(f"Processing time {current_time}, slice {current_slice}.")
+        #step2()
+
+        if (current_time, current_slice) in seed_points:
+            continue
+
         Energies={}
         for dy in range(-w//2, w//2):
             for dx in range(-w//2, w//2):
                 # Coordonnées du pixel dans la fenêtre
                 pixel_x = center_x + dx
                 pixel_y = center_y + dy
-                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),sigma=1,mean=0,p_CoG=(center_x,center_y),intensity=data[t_ED,pixel_x,pixel_y,slice],w=w)
+                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),sigma=1,mean=0,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
         min_energy_pixel = min(Energies, key=Energies.get)
-        seed_points[(t_ED,slice)]=min_energy_pixel
+        seed_points[(current_time,current_slice)]=min_energy_pixel
+        center_x,center_y=min_energy_pixel
 
-        set_pixel_red(data[t_ED,:,:,slice], min_energy_pixel[0], min_energy_pixel[1])
+        matrice_image[current_time,:,:,:,current_slice]=set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
+        if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in seed_points:
+            to_process.append((current_time,current_slice+1))
+        if current_slice-1>=0 and (current_time,current_slice-1) not in seed_points:
+            to_process.append((current_time,current_slice-1))
+    return seed_points,matrice_image
         
 
 
@@ -259,8 +315,8 @@ def step_1(patient_id):
 #patient_info("001")
 #plot_image_at_time_and_layer("001", 0,10)
 #plot_image_at_time_and_layer("001",12,0)
-#plot_all_layers_at_time("001", 0)
-#plot_all_times_for_layer("001", 5)
+plot_all_layers_at_time("001", 0)
+plot_all_times_for_layer("001", 5)
 
 # Afficher l'image de différence absolue entre ED et ES pour un patient et une couche donnés
 #plt.imshow(absolute_difference_Ed_ES("001", 5), cmap='gray')
@@ -270,4 +326,9 @@ def step_1(patient_id):
 
 #print(hough_transform(absolute_difference_Ed_ES("001", 5))[1])
 
-step_1("001")
+seed_points,matrice_image=step_1("001",True)
+
+plot_mat_resultat(matrice_image, 0)
+#plot_all_layers_at_time("001", 0)
+#plot_all_times_for_layer("001", 5)
+
