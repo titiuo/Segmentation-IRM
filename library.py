@@ -238,8 +238,9 @@ def step_1(irm,show=False):
     seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
     center_x,center_y=seed_points[(t_ED,middle_slice_index)]
-    matrice_image[t_ED,:,:,:,middle_slice_index]=set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y,show)
-
+    tmp = set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y,show)
+    matrice_image[t_ED,:,:,:,middle_slice_index] = tmp
+    irm.images_with_circles.append(tmp)
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     while to_process:
         current_time, current_slice = to_process.pop(0)
@@ -259,21 +260,29 @@ def step_1(irm,show=False):
         min_energy_pixel = min(Energies, key=Energies.get)
         seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
-
-        matrice_image[current_time,:,:,:,current_slice]=set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
+        tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
+        matrice_image[current_time,:,:,:,current_slice] = tmp
+        irm.images_with_circles.append(tmp)
         if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in seed_points:
             to_process.append((current_time,current_slice+1))
         if current_slice-1>=0 and (current_time,current_slice-1) not in seed_points:
             to_process.append((current_time,current_slice-1))
+    if show:
+        irm.images_with_circles = np.array(irm.images_with_circles)
+        bulk_plot(irm.images_with_circles)
     return seed_points,matrice_image
 
+def bulk_plot(data):
+    nav = ImageNavigator(data)
+    return nav
+
 irm = Irm("001")
-step_1(irm,show=True)
+seedpoints,matrice_image = step_1(irm,show=True)
 
-irm.images_with_circles = np.array(irm.images_with_circles)
-print(irm.images_with_circles.shape)
-print(irm.images_with_circles)
 
-plt.imshow(irm.images_with_circles[0,:,:,0])
-plt.axis('off')
-plt.show()
+
+
+
+
+
+

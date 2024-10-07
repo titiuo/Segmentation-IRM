@@ -372,12 +372,19 @@ plot_all_times_for_layer("001", 5) """
 
 #print(hough_transform(absolute_difference_Ed_ES("001", 5))[1])
 
-""" seed_points,matrice_image=step_1("001",True)
+seed_points,matrice_image=step_1("001",False)
+print(matrice_image.shape)
+print(matrice_image[0].shape)
+for k in range(10):
+    plt.imshow(matrice_image[15,:,:,:,k])
+    plt.show()
 
+""" for image in matrice_image:
+    plot_mat_resultat(image, 0) """
+"""
 plot_mat_resultat(matrice_image, 0) """
 #plot_all_layers_at_time("001", 0)
 #plot_all_times_for_layer("001", 5)
 
-irm=Irm("001")
-print(irm.to_process)
+
 
