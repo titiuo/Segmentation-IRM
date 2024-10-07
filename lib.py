@@ -4,9 +4,50 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
+
+
+## Class definition
+
+class Irm:
+    def __init__(self,patient_id):
+        self.patient_id=patient_id
+        self.image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
+        self.data = self.image.data.numpy()
+        self.info = patient_info(patient_id)
+        self.seed_points = {}
+        self.matrice_image = np.zeros((self.data.shape[0],self.data.shape[1],self.data.shape[2],3,self.data.shape[3]))
+        self.w=11
+        self.middle_slice_index = self.image.shape[-1] // 2
+        self.abs_diff = None
+        self.image_with_circles, self.initial_seed_point = None,None
+        self.seed_points={(self.info["ED"]-1,self.middle_slice_index):self.initial_seed_point[0],(self.info["ES"]-1,self.middle_slice_index):self.initial_seed_point[0]}
+        self.center_x,self.center_y=self.initial_seed_point[0]
+        self.matrice_image[self.info["ED"]-1,:,:,:,self.middle_slice_index]=set_pixel_red(self.data[self.info["ED"]-1,:,:,self.middle_slice_index], self.center_x, self.center_y,False)
+        self.to_process=[(self.info["ED"]-1,self.middle_slice_index),(self.info["ED"]-1,self.middle_slice_index+1),(self.info["ED"]-1,self.middle_slice_index-1)]
+        #self.process()
+        
+    def energy(self,p,sigma,mean,p_CoG,intensity,w=11):
+        return np.sqrt((2*sigma/(w-1)*np.sqrt((p[0]-p_CoG[0])**2+p[0]-p_CoG[0])**2)**2 + (intensity-mean)**2)
+    
+    def process(self):
+        while self.to_process:
+            current_time, current_slice = self.to_process.pop(0)
+            print(f"Processing time {current_time}, slice {current_slice}.")
+
+            if (current_time, current_slice) in self.seed_points:
+                continue
+
+            Energies={}
+            for dy in range(-self.w//2, self.w//2):
+                for dx in range(-self.w//2, self.w//2):
+                    pass
+
+
+
 ##FONCTIONS
 ##Plot
 def plot_image_at_time_and_layer(patient_id, time_index, layer_index):
+    """this function plots the image of a patient at a specific time and layer"""
     if int(patient_id) < 101:
         image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
     elif 100 <int(patient_id) < 151:
@@ -31,6 +72,7 @@ def plot_image_at_time_and_layer(patient_id, time_index, layer_index):
         print("Les indices fournis sont hors limites.")
 
 def plot_all_layers_at_time(patient_id, time_index):
+    """this function plots all layers of the 4D image at a specific time index"""
     if int(patient_id) < 101:
         image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
     elif 100 < int(patient_id) < 151:
@@ -73,6 +115,7 @@ def plot_all_layers_at_time(patient_id, time_index):
     plt.show()
 
 def plot_all_times_for_layer(patient_id, layer_index):
+    """this function plots all times of the 4D image at a specific layer index"""
     if int(patient_id) < 101:
         image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
     elif 100 < int(patient_id) < 151:
@@ -248,7 +291,7 @@ def set_pixel_red(image_gray, x, y,show=False):
     if show:
         plt.imshow(image_rgb)
         plt.axis('off')
-        plt.show()
+        plt.show() 
     return image_rgb
 
 
@@ -266,11 +309,14 @@ def step_1(patient_id,show=False):
         print("Patient ID must be between 001 et 150.")
         return
     
+    
+
     data=image.data.numpy()
     matrice_image=np.zeros((data.shape[0],data.shape[1],data.shape[2],3,data.shape[3]))
     middle_slice_index = image.shape[-1] // 2
     abs_diff=absolute_difference_Ed_ES(patient_id, middle_slice_index)
     image_with_circles, initial_seed_point = hough_transform(abs_diff, show)
+    
 
     if len(initial_seed_point) > 1:
         print("Plusieurs cercles détécté.")
@@ -315,8 +361,8 @@ def step_1(patient_id,show=False):
 #patient_info("001")
 #plot_image_at_time_and_layer("001", 0,10)
 #plot_image_at_time_and_layer("001",12,0)
-plot_all_layers_at_time("001", 0)
-plot_all_times_for_layer("001", 5)
+""" plot_all_layers_at_time("001", 0)
+plot_all_times_for_layer("001", 5) """
 
 # Afficher l'image de différence absolue entre ED et ES pour un patient et une couche donnés
 #plt.imshow(absolute_difference_Ed_ES("001", 5), cmap='gray')
@@ -326,9 +372,12 @@ plot_all_times_for_layer("001", 5)
 
 #print(hough_transform(absolute_difference_Ed_ES("001", 5))[1])
 
-seed_points,matrice_image=step_1("001",True)
+""" seed_points,matrice_image=step_1("001",True)
 
-plot_mat_resultat(matrice_image, 0)
+plot_mat_resultat(matrice_image, 0) """
 #plot_all_layers_at_time("001", 0)
 #plot_all_times_for_layer("001", 5)
+
+irm=Irm("001")
+print(irm.to_process)
 
