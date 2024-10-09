@@ -1,5 +1,9 @@
 ## **Objectif du Projet**
 
+## **Lecture de données**
+
+La donnée est en 4 dimensions : **(temps,x,y,coupe)**
+
 ## **Population étudiée**
 
 La population ciblée pour cette étude est composée de 150 patients répartis en 5 sous-groupes comme suit :

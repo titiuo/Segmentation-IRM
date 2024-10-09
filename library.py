@@ -17,9 +17,10 @@ class Irm():
         self.seed_points = {}
         self.matrice_image = np.zeros((self.data.shape[0],self.data.shape[1],self.data.shape[2],3,self.data.shape[3]))
         self.midde_slice = self.data.shape[-1]//2
-        self.images_with_circles = []
+        self.images_processed = []
         self.initial_seed_point = None
         self.set_of_slices = {} #key: time index, value: array of slices
+        self.hough_transform = None
         for k in range(self.data.shape[0]):
             self.set_of_slices[k] = np.array([self.data[k,:,:,i] for i in range(self.data.shape[3])])
         self.set_of_times = {} #key: layer index, value: array of times
@@ -96,7 +97,7 @@ class Irm():
         # Afficher l'image avec les cercles
         if show:
             image_rgb = set_pixel_red(blurred_image, seed_points[0][0], seed_points[0][1],show)
-            self.images_with_circles.append(image_rgb)
+            self.hough_transform = image_rgb
         # Retourner l'image avec les cercles et les seed points
         return blurred_image, seed_points
 
@@ -222,32 +223,31 @@ def step_1(irm,show=False):
         return
     
     
-
+    temporary_dictionnary = {} #used to store slicez in the right order
     data = irm.data
     matrice_image = np.zeros((data.shape[0],data.shape[1],data.shape[2],3,data.shape[3]))
     middle_slice_index = irm.midde_slice
     abs_diff = irm.abs_diff
     image_with_circles, initial_seed_point = irm.hough_transform(abs_diff, show)
-    
-
     if len(initial_seed_point) > 1:
         print("Plusieurs cercles détécté.")
         return
     t_ED=patient_info(irm.patient_id)["ED"]-1
     t_ES=patient_info(irm.patient_id)["ES"]-1
-    seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
+    irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
-    center_x,center_y=seed_points[(t_ED,middle_slice_index)]
+    center_x,center_y=irm.seed_points[(t_ED,middle_slice_index)]
     tmp = set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y,show)
     matrice_image[t_ED,:,:,:,middle_slice_index] = tmp
-    irm.images_with_circles.append(tmp)
+    temporary_dictionnary[(t_ED,middle_slice_index)] = tmp
+    #irm.images_processed.append(tmp)
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     while to_process:
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice}.")
         #step2()
 
-        if (current_time, current_slice) in seed_points:
+        if (current_time, current_slice) in irm.seed_points:
             continue
 
         Energies={}
@@ -258,23 +258,29 @@ def step_1(irm,show=False):
                 pixel_y = center_y + dy
                 Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),sigma=1,mean=0,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
         min_energy_pixel = min(Energies, key=Energies.get)
-        seed_points[(current_time,current_slice)]=min_energy_pixel
+        irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
         tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
         matrice_image[current_time,:,:,:,current_slice] = tmp
-        irm.images_with_circles.append(tmp)
-        if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in seed_points:
+        temporary_dictionnary[(current_time,current_slice)] = tmp
+        #irm.images_processed.append(tmp)
+        if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in irm.seed_points:
             to_process.append((current_time,current_slice+1))
-        if current_slice-1>=0 and (current_time,current_slice-1) not in seed_points:
+        if current_slice-1>=0 and (current_time,current_slice-1) not in irm.seed_points:
             to_process.append((current_time,current_slice-1))
+    for k in range(irm.data.shape[-1]):
+        irm.images_processed.append(temporary_dictionnary[(t_ED,k)])
     if show:
-        irm.images_with_circles = np.array(irm.images_with_circles)
-        bulk_plot(irm.images_with_circles)
-    return seed_points,matrice_image
+        irm.images_processed = np.array(irm.images_processed)
+        bulk_plot(irm.images_processed)
+    return matrice_image
 
 def bulk_plot(data):
     nav = ImageNavigator(data)
     return nav
+
+def step_2(irm):
+    pass
 
 irm = Irm("001")
 seedpoints,matrice_image = step_1(irm,show=True)
