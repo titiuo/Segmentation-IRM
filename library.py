@@ -20,7 +20,7 @@ class Irm():
         self.images_processed = []
         self.initial_seed_point = None
         self.set_of_slices = {} #key: time index, value: array of slices
-        self.hough_transform = None
+        self.hough_transform_image = None
         for k in range(self.data.shape[0]):
             self.set_of_slices[k] = np.array([self.data[k,:,:,i] for i in range(self.data.shape[3])])
         self.set_of_times = {} #key: layer index, value: array of times
@@ -97,7 +97,7 @@ class Irm():
         # Afficher l'image avec les cercles
         if show:
             image_rgb = set_pixel_red(blurred_image, seed_points[0][0], seed_points[0][1],show)
-            self.hough_transform = image_rgb
+            self.hough_transform_image = image_rgb
         # Retourner l'image avec les cercles et les seed points
         return blurred_image, seed_points
 
