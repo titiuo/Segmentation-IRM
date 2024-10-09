@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import cv2
 import torchio as tio
+from collections import deque
 
 
 ####################        CLASS DEFINITION       ####################
@@ -15,8 +16,9 @@ class Irm():
         self.data = self.image.data.numpy()
         self.info = patient_info(patient_id)
         self.seed_points = {}
-        self.matrice_image = np.zeros((self.data.shape[0],self.data.shape[1],self.data.shape[2],3,self.data.shape[3]))
         self.midde_slice = self.data.shape[-1]//2
+        self.t_ED=patient_info(self.patient_id)["ED"]-1
+        self.t_ES=patient_info(self.patient_id)["ES"]-1
         self.images_processed = []
         self.initial_seed_point = None
         self.set_of_slices = {} #key: time index, value: array of slices
@@ -225,29 +227,38 @@ def step_1(irm,show=False):
     
     temporary_dictionnary = {} #used to store slicez in the right order
     data = irm.data
-    matrice_image = np.zeros((data.shape[0],data.shape[1],data.shape[2],3,data.shape[3]))
     middle_slice_index = irm.midde_slice
     abs_diff = irm.abs_diff
     image_with_circles, initial_seed_point = irm.hough_transform(abs_diff, show)
     if len(initial_seed_point) > 1:
         print("Plusieurs cercles détécté.")
         return
-    t_ED=patient_info(irm.patient_id)["ED"]-1
-    t_ES=patient_info(irm.patient_id)["ES"]-1
+    t_ED = irm.t_ED
+    t_ES = irm.t_ES
     irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
     center_x,center_y=irm.seed_points[(t_ED,middle_slice_index)]
-    tmp = set_pixel_red(data[t_ED,:,:,middle_slice_index], center_x, center_y,show)
-    matrice_image[t_ED,:,:,:,middle_slice_index] = tmp
-    temporary_dictionnary[(t_ED,middle_slice_index)] = tmp
+    
+
     #irm.images_processed.append(tmp)
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     while to_process:
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice}.")
-        #step2()
+        image_segmented,region = region_growing(irm,current_time,center_y,center_x,current_slice)
 
+        image_segmented[center_y,center_x] = [0,0,255]
+        image_segmented[center_y,center_x+1] = [0,0,255]
+        image_segmented[center_y+1,center_x] = [0,0,255]
+        image_segmented[center_y,center_x-1] = [0,0,255]
+        image_segmented[center_y-1,center_x] = [0,0,255]
+
+        temporary_dictionnary[(current_time,current_slice)] = image_segmented
+    
         if (current_time, current_slice) in irm.seed_points:
+            mean = np.mean([data[current_time,x,y,current_slice] for x,y in region])
+            std=np.std([data[current_time,x,y,current_slice] for x,y in region])
+            print(mean)
             continue
 
         Energies={}
@@ -256,39 +267,67 @@ def step_1(irm,show=False):
                 # Coordonnées du pixel dans la fenêtre
                 pixel_x = center_x + dx
                 pixel_y = center_y + dy
-                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),sigma=1,mean=0,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
+                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),std,mean,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
         min_energy_pixel = min(Energies, key=Energies.get)
         irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
         tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
-        matrice_image[current_time,:,:,:,current_slice] = tmp
-        temporary_dictionnary[(current_time,current_slice)] = tmp
+        
         #irm.images_processed.append(tmp)
         if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in irm.seed_points:
             to_process.append((current_time,current_slice+1))
         if current_slice-1>=0 and (current_time,current_slice-1) not in irm.seed_points:
             to_process.append((current_time,current_slice-1))
+        l = [data[current_time,x,y,current_slice] for x,y in region]
+        print(l)
+        mean = np.mean(l)
+        print(mean)
     for k in range(irm.data.shape[-1]):
         irm.images_processed.append(temporary_dictionnary[(t_ED,k)])
     if show:
         irm.images_processed = np.array(irm.images_processed)
         bulk_plot(irm.images_processed)
-    return matrice_image
+    return 
 
 def bulk_plot(data):
     nav = ImageNavigator(data)
     return nav
 
-def step_2(irm):
-    pass
+def region_growing(irm, t,x ,y ,z, threshold=10):
+    initial_x,initial_y = x,y
+    to_explore = [(x,y)]
+    explored = []
+    edge= []
+    region=[(x,y)]
+    image_processed = irm.data[t,:,:,z]
+    while to_explore:
+        if len(explored)>2500:
+            raise ValueError("Too many iterations. Threshold is too high.")
+        x,y = to_explore.pop(0)
+        if not -1< x < irm.data.shape[1] and not -1< y < irm.data.shape[2]:
+            raise ValueError("Coordinates are out of bounds.")
+        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+            if couple not in explored and couple not in edge:
+                if abs(irm.data[t,x,y,z] -irm.data[t,couple[0],couple[1],z]) < threshold:
+                    to_explore.append(couple)
+                    region.append(couple)
+                else:
+                    edge.append(couple)
+            else:
+                continue 
+            explored.append(couple)
+    image_rgb = np.stack((image_processed,)*3, axis=-1)
+    for couple in edge:
+        image_rgb[couple[0],couple[1]] = [255,0,0]
+    return image_rgb,region
+
+
 
 irm = Irm("001")
-seedpoints,matrice_image = step_1(irm,show=True)
+step_1(irm,True)
+#print(irm.seed_points)
 
-
-
-
-
-
-
+#test,region = region_growing(irm,irm.t_ED,95,134,5)
+#print(max(irm.data[0,:,:,5].reshape(-1)))
+#irm.show_slices(0)
 
