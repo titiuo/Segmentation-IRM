@@ -198,7 +198,11 @@ def set_pixel_red(image_gray, x, y,show=False):
         numpy.ndarray: Image avec le pixel spécifié en rouge.
     """
     # Convertir l'image en niveaux de gris en image RGB
-    image_rgb = np.stack((image_gray,)*3, axis=-1)  # Créer un tableau RGB en dupliquant l'image en niveaux de gris
+    #image_rgb = np.stack((image_gray,)*3, axis=-1)  # Créer un tableau RGB en dupliquant l'image en niveaux de gris
+    if image_gray.dtype != np.uint8:
+        image_gray = cv2.convertScaleAbs(image_gray)  # Convertir en 8-bit unsigned
+
+    image_rgb = cv2.cvtColor(image_gray, cv2.COLOR_GRAY2RGB)  # Convertir en RGB tout en conservant les niveaux de gris
 
     # Mettre le pixel spécifié en rouge
     image_rgb[y, x] = [255, 0, 0]  # [R, G, B]
@@ -212,7 +216,7 @@ def set_pixel_red(image_gray, x, y,show=False):
         plt.show()  """
     return image_rgb
 
-def step_1(irm,show=False):
+def step_1(irm,show=False,filtered=False):
     def energy(p,sigma,mean,p_CoG,intensity,w=11):
         return np.sqrt((2*sigma/(w-1)*np.sqrt((p[0]-p_CoG[0])**2+p[0]-p_CoG[0])**2)**2 + (intensity-mean)**2)
 
@@ -245,7 +249,7 @@ def step_1(irm,show=False):
     while to_process:
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice}.")
-        image_segmented,region = region_growing(irm,current_time,center_y,center_x,current_slice)
+        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered)
 
         image_segmented[center_y,center_x] = [0,0,255]
         image_segmented[center_y,center_x+1] = [0,0,255]
@@ -258,7 +262,7 @@ def step_1(irm,show=False):
         if (current_time, current_slice) in irm.seed_points:
             mean = np.mean([data[current_time,x,y,current_slice] for x,y in region])
             std=np.std([data[current_time,x,y,current_slice] for x,y in region])
-            print(mean)
+            #print(mean)
             continue
 
         Energies={}
@@ -279,9 +283,9 @@ def step_1(irm,show=False):
         if current_slice-1>=0 and (current_time,current_slice-1) not in irm.seed_points:
             to_process.append((current_time,current_slice-1))
         l = [data[current_time,x,y,current_slice] for x,y in region]
-        print(l)
+        #print(l)
         mean = np.mean(l)
-        print(mean)
+        #print(mean)
     for k in range(irm.data.shape[-1]):
         irm.images_processed.append(temporary_dictionnary[(t_ED,k)])
     if show:
@@ -293,7 +297,45 @@ def bulk_plot(data):
     nav = ImageNavigator(data)
     return nav
 
-def region_growing(irm, t,x ,y ,z, threshold=10):
+def ker_gau(s):
+    ss=int(max(3,2*np.round(2.5*s)+1))
+    ms=(ss-1)//2
+    X=np.arange(-ms,ms+0.99)
+    y=np.exp(-X**2/2/s**2)
+    out=y.reshape((ss,1))@y.reshape((1,ss))
+    out=out/out.sum()
+    return out
+
+
+def filtre_lineaire(im,mask):
+    """ renvoie la convolution de l'image avec le mask. Le calcul se fait en 
+utilisant la transformee de Fourier et est donc circulaire.  Fonctionne seulement pour 
+les images en niveau de gris.
+"""
+    fft2=np.fft.fft2
+    ifft2=np.fft.ifft2
+    (y,x)=im.shape
+    (ym,xm)=mask.shape
+    mm=np.zeros((y,x))
+    mm[:ym,:xm]=mask
+    fout=(fft2(im)*fft2(mm))
+    # on fait une translation pour ne pas avoir de decalage de l'image
+    # pour un mask de taille impair ce sera parfait, sinon, il y a toujours un decalage de 1/2
+    mm[:ym,:xm]=0
+    y2=int(np.round(ym/2-0.5))
+    x2=int(np.round(xm/2-0.5))
+    mm[y2,x2]=1
+    out=np.real(ifft2(fout*np.conj(fft2(mm))))
+    return out
+
+
+
+def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
+    s = 0.56
+    if filtered:
+        working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
+    else:
+        working_set = irm.data[t,:,:,z]
     initial_x,initial_y = x,y
     to_explore = [(x,y)]
     explored = []
@@ -304,11 +346,11 @@ def region_growing(irm, t,x ,y ,z, threshold=10):
         if len(explored)>2500:
             raise ValueError("Too many iterations. Threshold is too high.")
         x,y = to_explore.pop(0)
-        if not -1< x < irm.data.shape[1] and not -1< y < irm.data.shape[2]:
+        if not -1< x < irm.data.shape[1] or not -1< y < irm.data.shape[2]:
             raise ValueError("Coordinates are out of bounds.")
         for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
             if couple not in explored and couple not in edge:
-                if abs(irm.data[t,x,y,z] -irm.data[t,couple[0],couple[1],z]) < threshold:
+                if abs(working_set[x,y] -working_set[couple[0],couple[1]]) < threshold:
                     to_explore.append(couple)
                     region.append(couple)
                 else:
@@ -319,15 +361,72 @@ def region_growing(irm, t,x ,y ,z, threshold=10):
     image_rgb = np.stack((image_processed,)*3, axis=-1)
     for couple in edge:
         image_rgb[couple[0],couple[1]] = [255,0,0]
+    print(f'Number of pixels in the region: {len(region)} for s = {s}')
+    return image_rgb,region
+
+def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False):
+    s = 0.56
+    """ if filtered:
+        working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
+    else:
+        working_set = irm.data[t,:,:,z] """
+    # Convert the image to 32-bit float format
+    if filtered:
+        image_32f = irm.data[t,:,:,z].astype(np.float32)
+        working_set = cv2.bilateralFilter(image_32f, 9, 75, 75)
+    else:
+        working_set = irm.data[t,:,:,z]
+    initial_x,initial_y = x,y
+    to_explore = [(x,y)]
+    explored = []
+    edge= []
+    region=[(x,y)]
+    image_processed = irm.data[t,:,:,z]
+    while to_explore:
+        if len(explored)>2500:
+            to_explore = [(initial_x,initial_y)]
+            explored = []
+            edge= []
+            region=[(initial_x,initial_y)]
+            print("Too many iterations. Threshold is too high.")
+            threshold-=1
+        x,y = to_explore.pop(0)
+        if not -1< x < irm.data.shape[1] or not -1< y < irm.data.shape[2]:
+            raise ValueError("Coordinates are out of bounds.")
+        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+            if couple not in explored and couple not in edge:
+                if abs(working_set[x,y] -working_set[couple[0],couple[1]]) < threshold:
+                    to_explore.append(couple)
+                    region.append(couple)
+                else:
+                    edge.append(couple)
+            else:
+                continue 
+            explored.append(couple)
+    image_rgb = np.stack((image_processed,)*3, axis=-1)
+    for couple in edge:
+        image_rgb[couple[0],couple[1]] = [255,0,0]
+    print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
 
-
 irm = Irm("001")
-step_1(irm,True)
 #print(irm.seed_points)
 
 #test,region = region_growing(irm,irm.t_ED,95,134,5)
 #print(max(irm.data[0,:,:,5].reshape(-1)))
 #irm.show_slices(0)
 
+""" g = ker_gau(0.5)
+
+data = []
+for k in range(irm.data.shape[-1]):
+    data.append(filtre_lineaire(irm.data[0,:,:,k],g))
+    data.append(irm.data[0,:,:,k])
+
+data = np.array(data)
+
+bulk_plot(data) """
+
+
+step_1(irm,show=True,filtered=True)
