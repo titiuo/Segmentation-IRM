@@ -29,6 +29,9 @@ class Irm():
         for k in range(self.data.shape[3]):
             self.set_of_times[k] = np.array([self.data[i,:,:,k] for i in range(self.data.shape[0])])
         self.abs_diff = absolute_difference_Ed_ES(patient_id, self.midde_slice)
+        self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
+        self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
+        self.mean_dice = None
 
     def show_slices(self, time_index):
         """this function plots all layers of the 4D image at a specific time index"""
@@ -102,6 +105,10 @@ class Irm():
             self.hough_transform_image = image_rgb
         # Retourner l'image avec les cercles et les seed points
         return blurred_image, seed_points
+    
+    def dice_coefficient(self):
+        first = self.images_processed[self.t_ED]
+        second = self.images_processed[self.t_ES]
 
 
 class ImageNavigator:
@@ -228,6 +235,18 @@ def step_1(irm,show=False,filtered=False):
         print("Patient ID must be between 001 et 150.")
         return
     
+    def get_next_seed():
+        Energies={}
+        for dy in range(-w//2, w//2):
+            for dx in range(-w//2, w//2):
+                # Coordonnées du pixel dans la fenêtre
+                pixel_x = center_x + dx
+                pixel_y = center_y + dy
+                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),std,mean,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
+        min_energy_pixel = min(Energies, key=Energies.get)
+        print(f"Minimum energy pixel: {min_energy_pixel} at slice {current_slice}.")
+        return min_energy_pixel
+    
     
     temporary_dictionnary = {} #used to store slicez in the right order
     data = irm.data
@@ -249,7 +268,7 @@ def step_1(irm,show=False,filtered=False):
     while to_process:
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice}.")
-        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered)
+        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered, nb_neighbours=4)
 
         image_segmented[center_y,center_x] = [0,0,255]
         image_segmented[center_y,center_x+1] = [0,0,255]
@@ -265,14 +284,9 @@ def step_1(irm,show=False,filtered=False):
             #print(mean)
             continue
 
-        Energies={}
-        for dy in range(-w//2, w//2):
-            for dx in range(-w//2, w//2):
-                # Coordonnées du pixel dans la fenêtre
-                pixel_x = center_x + dx
-                pixel_y = center_y + dy
-                Energies[(pixel_x,pixel_y)]=energy((pixel_x,pixel_y),std,mean,p_CoG=(center_x,center_y),intensity=data[current_time,pixel_x,pixel_y,current_slice],w=w)
-        min_energy_pixel = min(Energies, key=Energies.get)
+        #min_energy_pixel = get_next_seed()
+        min_energy_pixel = barycentre(irm,current_time, current_slice, region)
+        print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
         irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
         tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
@@ -364,7 +378,7 @@ def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
     print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
-def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False):
+def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_neighbours=8):
     s = 0.56
     """ if filtered:
         working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
@@ -388,12 +402,16 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False):
             explored = []
             edge= []
             region=[(initial_x,initial_y)]
-            print("Too many iterations. Threshold is too high.")
+            #print("Too many iterations. Threshold is too high.")
             threshold-=1
         x,y = to_explore.pop(0)
         if not -1< x < irm.data.shape[1] or not -1< y < irm.data.shape[2]:
             raise ValueError("Coordinates are out of bounds.")
-        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+        if nb_neighbours == 4:
+            neighbours = [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
+        elif nb_neighbours == 8:
+            neighbours = [(x+1,y),(x-1,y),(x,y+1),(x,y-1), (x+1,y+1),(x-1,y-1),(x+1,y-1),(x-1,y+1)]
+        for couple in neighbours:
             if couple not in explored and couple not in edge:
                 if abs(working_set[x,y] -working_set[couple[0],couple[1]]) < threshold:
                     to_explore.append(couple)
@@ -405,28 +423,57 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False):
             explored.append(couple)
     image_rgb = np.stack((image_processed,)*3, axis=-1)
     for couple in edge:
-        image_rgb[couple[0],couple[1]] = [255,0,0]
-    print(f'Number of pixels in the region: {len(region)} for s = {s}')
+        image_rgb[couple[0],couple[1]] = [255,0,0] 
+    for couple in region:
+        image_rgb[couple[0],couple[1]] = [0,128,0]
+    #print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
+def barycentre(irm,t,z, region):
+    image = irm.data[t,:,:,z]
+    total_intensity = sum([image[couple[0], couple[1]] for couple in region])
+    x = sum([couple[0] * image[couple[0], couple[1]] for couple in region]) / total_intensity
+    y = sum([couple[1] * image[couple[0], couple[1]] for couple in region]) / total_intensity
+    return (int(y),int(x))
 
-irm = Irm("001")
-#print(irm.seed_points)
-
-#test,region = region_growing(irm,irm.t_ED,95,134,5)
-#print(max(irm.data[0,:,:,5].reshape(-1)))
-#irm.show_slices(0)
-
-""" g = ker_gau(0.5)
-
-data = []
-for k in range(irm.data.shape[-1]):
-    data.append(filtre_lineaire(irm.data[0,:,:,k],g))
-    data.append(irm.data[0,:,:,k])
-
-data = np.array(data)
-
-bulk_plot(data) """
+def binary(image):
+    im = np.zeros((image.shape[0],image.shape[1]))
+    for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+            if (image[x,y] == [0,128,0]).all() or (image[x,y] == [0,0,255]).all():
+                print("Found a green pixel.")
+                im[x,y] = 1
+            else:
+                pass
+    return im
 
 
-step_1(irm,show=True,filtered=True)
+def dice_coefficient(image1,image2,show=False):
+    intersection = np.logical_and(image1,image2)
+    if show:
+        plt.imshow(intersection)
+        plt.show()
+    return 2. * intersection.sum() / (image1.sum() + image2.sum())
+
+
+def metrics(irm, show = False):
+    mean = 0
+    predictions = []
+    irm.images_processed = np.array(irm.images_processed)
+    for k in range(irm.data.shape[-1]):
+        predictions.append(binary(irm.images_processed[k,:,:]))
+    gt1 = irm.gt1
+    for k in range(gt1.shape[-1]):
+        print(predictions[k].shape)
+        print(gt1[0,:,:,k].shape)
+        dice = dice_coefficient(predictions[k],gt1[0,:,:,k],show)
+        print(f"Dice coefficient for slice {k}: {dice}")
+        mean += dice
+    mean /= gt1.shape[-1]
+    print(f"Mean dice coefficient: {mean}")
+    return mean
+    
+    
+
+
+
