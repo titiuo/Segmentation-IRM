@@ -129,9 +129,14 @@ class ImageNavigator:
         self.bprev = Button(axprev, 'Previous')
         self.bnext = Button(axnext, 'Next')
         self.bprev.on_clicked(lambda event: self.prev_image(event, type))
-        self.bnext.on_clicked(lambda event: self.next_image(event, type))
-
+        self.bnext.on_clicked(lambda event: self.next_image(event, type))        
         plt.show()
+
+    def save_image(self, event):
+        """Save the current image to a file."""
+        filename = f'image_{self.current_index}.png'
+        plt.imsave(filename, self.data[self.current_index, :, :], cmap='gray')
+        print(f'Saved image {filename}')
 
     def update_image(self,type):
         self.image.set_data(self.data[self.current_index, :, :])
@@ -449,9 +454,26 @@ def binary(image):
 
 
 def dice_coefficient(image1,image2,show=False):
+    image2 = image2 > 2.
     intersection = np.logical_and(image1,image2)
+    diff = np.abs(image1-intersection)
     if show:
-        plt.imshow(intersection)
+        fig, axs = plt.subplots(1,4 , figsize=(15, 5))
+        axs[0].imshow(image1, cmap='gray')
+        axs[0].set_title('Image 1')
+        axs[0].axis('off')
+
+        axs[1].imshow(image2, cmap='gray')
+        axs[1].set_title('Image 2')
+        axs[1].axis('off')
+
+        axs[2].imshow(intersection, cmap='gray')
+        axs[2].set_title('Intersection')
+        axs[2].axis('off')
+
+        axs[3].imshow(diff, cmap='gray')
+        axs[3].set_title('Difference between our segmentation and real segmentation')
+        axs[3].axis('off')
         plt.show()
     return 2. * intersection.sum() / (image1.sum() + image2.sum())
 

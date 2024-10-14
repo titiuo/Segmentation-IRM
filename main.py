@@ -5,4 +5,4 @@ if __name__ == '__main__':
 
     step_1(irm,filtered=True, show=True)
 
-    metrics(irm)
+    metrics(irm, show=True)
