@@ -5,6 +5,7 @@ from matplotlib.widgets import Button
 import cv2
 import torchio as tio
 from collections import deque
+import json
 
 
 ####################        CLASS DEFINITION       ####################
@@ -30,7 +31,7 @@ class Irm():
             self.set_of_times[k] = np.array([self.data[i,:,:,k] for i in range(self.data.shape[0])])
         self.abs_diff = absolute_difference_Ed_ES(patient_id, self.midde_slice)
         self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
-        self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
+        #self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
         self.mean_dice = None
 
     def show_slices(self, time_index):
@@ -259,8 +260,8 @@ def step_1(irm,show=False,filtered=False):
     abs_diff = irm.abs_diff
     image_with_circles, initial_seed_point = irm.hough_transform(abs_diff, show)
     if len(initial_seed_point) > 1:
-        print("Plusieurs cercles détécté.")
-        return
+        print("\n\n/!\ Plusieurs cercles détécté /!\ \n\n")
+
     t_ED = irm.t_ED
     t_ES = irm.t_ES
     irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
@@ -426,9 +427,10 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
             else:
                 continue 
             explored.append(couple)
+    region = dilate(region)
     image_rgb = np.stack((image_processed,)*3, axis=-1)
-    for couple in edge:
-        image_rgb[couple[0],couple[1]] = [255,0,0] 
+    """ for couple in edge:
+        image_rgb[couple[0],couple[1]] = [255,0,0]  """
     for couple in region:
         image_rgb[couple[0],couple[1]] = [0,128,0]
     #print(f'Number of pixels in the region: {len(region)} for s = {s}')
@@ -446,7 +448,6 @@ def binary(image):
     for x in range(image.shape[0]):
         for y in range(image.shape[1]):
             if (image[x,y] == [0,128,0]).all() or (image[x,y] == [0,0,255]).all():
-                print("Found a green pixel.")
                 im[x,y] = 1
             else:
                 pass
@@ -479,6 +480,9 @@ def dice_coefficient(image1,image2,show=False):
 
 
 def metrics(irm, show = False):
+    id = irm.patient_id
+    new_data = {str(id): {}}
+    tmp_data = new_data[str(id)]
     mean = 0
     predictions = []
     irm.images_processed = np.array(irm.images_processed)
@@ -486,16 +490,36 @@ def metrics(irm, show = False):
         predictions.append(binary(irm.images_processed[k,:,:]))
     gt1 = irm.gt1
     for k in range(gt1.shape[-1]):
-        print(predictions[k].shape)
-        print(gt1[0,:,:,k].shape)
         dice = dice_coefficient(predictions[k],gt1[0,:,:,k],show)
-        print(f"Dice coefficient for slice {k}: {dice}")
+        tmp_data[f"Dice coefficient for slice {k}"] = f"{dice}"
         mean += dice
     mean /= gt1.shape[-1]
-    print(f"Mean dice coefficient: {mean}")
+    tmp_data[f"Mean dice coefficient:"] = f"{mean}"
+    try:
+        with open('logs.json', "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+    # Si le fichier n'existe pas, initialiser un tableau vide
+        data = []
+
+    # Ajouter les nouvelles données
+    data.append(new_data)
+
+    # Réécrire le fichier JSON avec les nouvelles données
+    with open('logs.json', "w") as file:
+        json.dump(data, file, indent=4)
     return mean
     
     
 
+def dilate(region):
+    tmp = region.copy()
+    for pixel in tmp:
+        x,y = pixel
+        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+            if couple not in tmp:
+                region.append(couple)
+    return region
+        
 
 
