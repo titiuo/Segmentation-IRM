@@ -8,6 +8,7 @@ from collections import deque
 import json
 
 
+
 ####################        CLASS DEFINITION       ####################
 
 class Irm():
@@ -223,10 +224,10 @@ def set_pixel_red(image_gray, x, y,show=False):
     image_rgb[y+1,x]=[255,0,0]
     image_rgb[y,x-1]=[255,0,0]
     image_rgb[y-1,x]=[255,0,0]
-    """     if show:
+    if show:
         plt.imshow(image_rgb)
         plt.axis('off')
-        plt.show()  """
+        plt.show()  
     return image_rgb
 
 def step_1(irm,show=False,filtered=False):
@@ -260,7 +261,8 @@ def step_1(irm,show=False,filtered=False):
     abs_diff = irm.abs_diff
     image_with_circles, initial_seed_point = irm.hough_transform(abs_diff, show)
     if len(initial_seed_point) > 1:
-        print("\n\n/!\ Plusieurs cercles détécté /!\ \n\n")
+        raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
+        
 
     t_ED = irm.t_ED
     t_ES = irm.t_ES
@@ -479,31 +481,41 @@ def dice_coefficient(image1,image2,show=False):
     return 2. * intersection.sum() / (image1.sum() + image2.sum())
 
 
-def metrics(irm, show = False):
+def metrics(irm, e=None,show = False):
     id = irm.patient_id
-    new_data = {str(id): {}}
-    tmp_data = new_data[str(id)]
+    
     mean = 0
     predictions = []
     irm.images_processed = np.array(irm.images_processed)
-    for k in range(irm.data.shape[-1]):
-        predictions.append(binary(irm.images_processed[k,:,:]))
-    gt1 = irm.gt1
-    for k in range(gt1.shape[-1]):
-        dice = dice_coefficient(predictions[k],gt1[0,:,:,k],show)
-        tmp_data[f"Dice coefficient for slice {k}"] = f"{dice}"
-        mean += dice
-    mean /= gt1.shape[-1]
-    tmp_data[f"Mean dice coefficient:"] = f"{mean}"
+    if e is not None:
+        if str(e)[:26] == "Plusieurs cercles detectes":
+            tmp_data = str(e)
+        elif str(e) == "Too many iterations. Threshold is too high.":
+            tmp_data = "Too many iterations. Threshold is too high."
+        elif str(e) == "Coordinates are out of bounds.":
+            tmp_data = "Coordinates are out of bounds."
+        else:
+            raise ValueError("Error not recognized.")
+    else:
+        tmp_data={}
+        for k in range(irm.data.shape[-1]):
+            predictions.append(binary(irm.images_processed[k,:,:]))
+        gt1 = irm.gt1
+        for k in range(gt1.shape[-1]):
+            dice = dice_coefficient(predictions[k],gt1[0,:,:,k],show)
+            tmp_data[f"Dice coefficient for slice {k}"] = f"{dice}"
+            mean += dice
+        mean /= gt1.shape[-1]
+        tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     try:
         with open('logs.json', "r") as file:
             data = json.load(file)
     except FileNotFoundError:
     # Si le fichier n'existe pas, initialiser un tableau vide
-        data = []
+        data = {}
 
     # Ajouter les nouvelles données
-    data.append(new_data)
+    data[str(id)] = tmp_data
 
     # Réécrire le fichier JSON avec les nouvelles données
     with open('logs.json', "w") as file:
@@ -522,4 +534,6 @@ def dilate(region):
     return region
         
 
-
+irm=Irm("100")
+plt.imshow(irm.abs_diff)
+plt.show()

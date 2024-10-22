@@ -13,8 +13,9 @@ if __name__ == '__main__':
         print("\n\n ---------------------------------------- \n\n")
         print(f"Processing image {id}...\n\n") 
 
-        
-        step_1(irm, filtered=True, show=False)
-        
-        metrics(irm, show=False)
+        try:
+            step_1(irm, filtered=True, show=False)
+            metrics(irm,show=False)
+        except ValueError as e:
+            metrics(irm, e,show=False)
 
