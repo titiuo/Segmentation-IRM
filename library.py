@@ -258,8 +258,14 @@ def step_1(irm,show=False,filtered=False):
     temporary_dictionnary = {} #used to store slicez in the right order
     data = irm.data
     middle_slice_index = irm.midde_slice
-    abs_diff = irm.abs_diff
-    image_with_circles, initial_seed_point = irm.hough_transform(abs_diff, show)
+    
+    image_32f = irm.abs_diff.astype(np.float32)
+    working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8)
+    kernel = np.ones((5,5), np.uint8)
+
+    # Application de la fermeture (dilatation suivie d'une érosion)
+    closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
+    initial_seed_point = [hough(closed_image,w=30)]
     if len(initial_seed_point) > 1:
         raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
         
@@ -532,8 +538,60 @@ def dilate(region):
             if couple not in tmp:
                 region.append(couple)
     return region
-        
+   
 
 irm=Irm("100")
-plt.imshow(irm.abs_diff)
-plt.show()
+image_32f = irm.abs_diff.astype(np.float32)
+working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8)
+kernel = np.ones((5,5), np.uint8)
+
+# Application de la fermeture (dilatation suivie d'une érosion)
+closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
+
+def get_window(image,w=75):
+    region = []
+    for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+            region.append((x,y))
+    total_intensity = sum([image[couple[0], couple[1]] for couple in region])
+    x = sum([couple[0] * image[couple[0], couple[1]] for couple in region]) / total_intensity
+    y = sum([couple[1] * image[couple[0], couple[1]] for couple in region]) / total_intensity
+    x = int(x)
+    y = int(y)
+    windowed = image[x-w:x+w,y-w:y+w]
+    return windowed,(x,y)
+
+
+
+radius=15
+thickness=1
+def hough(closed_image,w=75,thickness=1):
+    closed_image,(x_bary,y_bary) = get_window(closed_image,w)
+    grad_x = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 1, 0, ksize=5)
+    grad_y = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 0, 1, ksize=5)
+    grad_magnitude = cv2.magnitude(grad_x, grad_y)
+    closed_image = grad_magnitude >35
+    shape = closed_image.shape
+    ima_intens=np.zeros((15,shape[0],shape[1]))
+    for r in range(10,25):
+        for a in range(closed_image.shape[0]):
+            for b in range(closed_image.shape[1]):
+                if closed_image[a,b]==True:
+                    mask=np.zeros(closed_image.shape)
+                    cv2.circle(mask,(a,b),r,255,thickness)
+                    ima_intens[r-10][mask==255]+=1 
+    """ plt.imshow(ima_intens)
+    plt.show()  """
+    return np.unravel_index(np.argmax(ima_intens),ima_intens.shape)[1:]+np.array([x_bary-w,y_bary-w])
+
+""" point = hough(closed_image.astype(bool),w=30)
+
+
+
+print(point)
+
+plt.figure(1)
+plt.imshow(closed_image) 
+plt.figure(2)
+plt.imshow(working_set)
+plt.show() """
