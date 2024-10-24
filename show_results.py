@@ -1,5 +1,6 @@
 import json
 import matplotlib.pyplot as plt
+import numpy as np
 
 with open(f'logs.json', 'r') as file:
     data = json.load(file)
@@ -17,8 +18,8 @@ for k in range(1,101):
         pass
     try:
         new_data = data[str(k)]
-        print(new_data)
-        val = new_data['Mean dice coefficient:']
+        #print(new_data)
+        val = float(new_data['Mean dice coefficient:'])
         all_data[k] = val
     except:
         all_errors.append(k)
@@ -27,6 +28,18 @@ for k in range(1,101):
 import statistics
 
 #mean = statistics.mean(all_data.values())
+
+values = all_data.values()
+
+mean = np.mean(list(values))
+
+print('Mean dice: ', mean)
+
+count = 0
+for val in values:
+    if val < 0.4:
+        count += 1
+print('Number of zeros in values: ', count)
 
 #print('Mean dice: mean')
 
