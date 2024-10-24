@@ -259,13 +259,13 @@ def step_1(irm,show=False,filtered=False):
     data = irm.data
     middle_slice_index = irm.midde_slice
     
-    image_32f = irm.abs_diff.astype(np.float32)
-    working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8)
+    working_set = irm.abs_diff.astype('uint8')	
+    edges = cv2.Canny(working_set, 100, 200)
     kernel = np.ones((5,5), np.uint8)
 
     # Application de la fermeture (dilatation suivie d'une érosion)
-    closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
-    initial_seed_point = [hough(closed_image,w=30)]
+    #closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
+    initial_seed_point = [hough(edges)]
     if len(initial_seed_point) > 1:
         raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
         
@@ -456,8 +456,11 @@ def barycentre(irm, t, z, region):
         raise ValueError("Region is empty, cannot compute barycentre.")
     
     for couple in region:
-        x, y = couple
-        A[x, y] = 1
+        try:
+            x, y = couple
+            A[x, y] = 1
+        except:
+            pass
 
     total_sum = np.sum(A)
     if total_sum == 0:
@@ -565,13 +568,13 @@ def dilate(region):
     return region
    
 
-irm=Irm("100")
+""" irm=Irm("100")
 image_32f = irm.abs_diff.astype(np.float32)
-working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8)
-kernel = np.ones((5,5), np.uint8)
+working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8) """
+#kernel = np.ones((5,5), np.uint8)
 
 # Application de la fermeture (dilatation suivie d'une érosion)
-closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
+#closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
 
 def get_window(image,w=75):
     region = []
@@ -584,6 +587,8 @@ def get_window(image,w=75):
     x = int(x)
     y = int(y)
     windowed = image[x-w:x+w,y-w:y+w]
+    plt.imshow(windowed)
+    plt.show()
     return windowed,(x,y)
 
 
@@ -591,24 +596,27 @@ def get_window(image,w=75):
 radius=15
 thickness=1
 def hough(closed_image,w=75,thickness=1):
-    closed_image,(x_bary,y_bary) = get_window(closed_image,w)
+    """ closed_image,(x_bary,y_bary) = get_window(closed_image,w)
     grad_x = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 1, 0, ksize=5)
     grad_y = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 0, 1, ksize=5)
     grad_magnitude = cv2.magnitude(grad_x, grad_y)
-    closed_image = grad_magnitude >35
+    closed_image = grad_magnitude >35 """
     shape = closed_image.shape
     ima_intens=np.zeros((15,shape[0],shape[1]))
     for r in range(10,25):
         for a in range(closed_image.shape[0]):
             for b in range(closed_image.shape[1]):
-                if closed_image[a,b]==True:
+                if closed_image[a,b]==255:
                     mask=np.zeros(closed_image.shape)
-                    cv2.circle(mask,(a,b),r,255,thickness)
+                    cv2.circle(mask,(b,a),r,255,thickness)
                     ima_intens[r-10][mask==255]+=1 
-    """ plt.imshow(ima_intens)
-    plt.show()  """
-    return np.unravel_index(np.argmax(ima_intens),ima_intens.shape)[1:]+np.array([x_bary-w,y_bary-w])
 
+    r,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape) #+np.array([x_bary-w,y_bary-w])
+    #print(r,x,y)
+    #plt.figure(1)
+    #plt.imshow(ima_intens[r-10])
+    return x,y
+    
 """ point = hough(closed_image.astype(bool),w=30)
 
 
