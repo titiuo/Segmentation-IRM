@@ -274,7 +274,7 @@ def step_1(irm,show=False,filtered=False):
     t_ES = irm.t_ES
     irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
-    center_x,center_y=irm.seed_points[(t_ED,middle_slice_index)]
+    center_y,center_x=irm.seed_points[(t_ED,middle_slice_index)]
     
 
     #irm.images_processed.append(tmp)
@@ -303,7 +303,7 @@ def step_1(irm,show=False,filtered=False):
         print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
         irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
-        tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1],show)
+        tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1])
         
         #irm.images_processed.append(tmp)
         if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in irm.seed_points:
@@ -404,6 +404,7 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
         working_set = cv2.bilateralFilter(image_32f, 9, 75, 75)
     else:
         working_set = irm.data[t,:,:,z]
+    print(f"shape of working_set : {working_set.shape}")
     initial_x,initial_y = x,y
     to_explore = [(x,y)]
     explored = []
@@ -426,7 +427,7 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
         elif nb_neighbours == 8:
             neighbours = [(x+1,y),(x-1,y),(x,y+1),(x,y-1), (x+1,y+1),(x-1,y-1),(x+1,y-1),(x-1,y+1)]
         for couple in neighbours:
-            if couple not in explored and couple not in edge:
+            if couple not in explored and couple not in edge and -1<couple[0]<irm.data.shape[1] and -1<couple[1]<irm.data.shape[2]:
                 if abs(working_set[x,y] -working_set[couple[0],couple[1]]) < threshold:
                     to_explore.append(couple)
                     region.append(couple)
@@ -444,12 +445,31 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
     #print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
-def barycentre(irm,t,z, region):
-    image = irm.data[t,:,:,z]
-    total_intensity = sum([image[couple[0], couple[1]] for couple in region])
-    x = sum([couple[0] * image[couple[0], couple[1]] for couple in region]) / total_intensity
-    y = sum([couple[1] * image[couple[0], couple[1]] for couple in region]) / total_intensity
-    return (int(y),int(x))
+def barycentre(irm, t, z, region):
+    A = np.zeros((irm.data.shape[1], irm.data.shape[2]))
+    
+    if not region:
+        raise ValueError("Region is empty, cannot compute barycentre.")
+    
+    for couple in region:
+        x, y = couple
+        A[x, y] = 1
+
+    total_sum = np.sum(A)
+    if total_sum == 0:
+        raise ValueError("Sum of the binary image is zero, cannot compute barycentre.")
+
+    x = np.sum(A * np.arange(A.shape[0]).reshape(-1, 1)) / total_sum
+    y = np.sum(A * np.arange(A.shape[1]).reshape(1, -1)) / total_sum
+
+    plt.scatter([y], [x], color='red')  # Visualiser le barycentre
+    plt.imshow(A)
+    plt.title(f"Barycentre for slice {z}")
+    plt.show()
+
+    print(f"Barycentre: ({y}, {x})")
+    return (int(y), int(x))
+
 
 def binary(image):
     im = np.zeros((image.shape[0],image.shape[1]))
@@ -487,7 +507,7 @@ def dice_coefficient(image1,image2,show=False):
     return 2. * intersection.sum() / (image1.sum() + image2.sum())
 
 
-def metrics(irm, e=None,show = False):
+def metrics(irm, e=None,show = False,write=True):
     id = irm.patient_id
     
     mean = 0
@@ -513,19 +533,20 @@ def metrics(irm, e=None,show = False):
             mean += dice
         mean /= gt1.shape[-1]
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
-    try:
-        with open('logs.json', "r") as file:
-            data = json.load(file)
-    except FileNotFoundError:
-    # Si le fichier n'existe pas, initialiser un tableau vide
-        data = {}
+    if write:
+        try:
+            with open('logs.json', "r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+        # Si le fichier n'existe pas, initialiser un tableau vide
+            data = {}
 
-    # Ajouter les nouvelles données
-    data[str(id)] = tmp_data
+        # Ajouter les nouvelles données
+        data[str(id)] = tmp_data
 
-    # Réécrire le fichier JSON avec les nouvelles données
-    with open('logs.json', "w") as file:
-        json.dump(data, file, indent=4)
+        # Réécrire le fichier JSON avec les nouvelles données
+        with open('logs.json', "w") as file:
+            json.dump(data, file, indent=4)
     return mean
     
     
