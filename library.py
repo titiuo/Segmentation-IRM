@@ -303,7 +303,8 @@ def step_1(irm,show=False,filtered=False):
         print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
         irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
-        tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1])
+        image_segmented[center_y,center_x] = [255,0,0]
+        #tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1])
         
         #irm.images_processed.append(tmp)
         if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in irm.seed_points:
@@ -441,7 +442,10 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
     """ for couple in edge:
         image_rgb[couple[0],couple[1]] = [255,0,0]  """
     for couple in region:
-        image_rgb[couple[0],couple[1]] = [0,128,0]
+        try:
+            image_rgb[couple[0],couple[1]] = [0,128,0]
+        except:
+            pass
     #print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
@@ -462,12 +466,12 @@ def barycentre(irm, t, z, region):
     x = np.sum(A * np.arange(A.shape[0]).reshape(-1, 1)) / total_sum
     y = np.sum(A * np.arange(A.shape[1]).reshape(1, -1)) / total_sum
 
-    plt.scatter([y], [x], color='red')  # Visualiser le barycentre
+    """ plt.scatter([y], [x], color='red')  # Visualiser le barycentre
     plt.imshow(A)
     plt.title(f"Barycentre for slice {z}")
-    plt.show()
+    plt.show() """
 
-    print(f"Barycentre: ({y}, {x})")
+    #print(f"Barycentre: ({y}, {x})")
     return (int(y), int(x))
 
 

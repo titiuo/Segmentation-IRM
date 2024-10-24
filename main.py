@@ -1,10 +1,10 @@
 from library import *
 
 if __name__ == '__main__':
-    """     irm = Irm('002')
+    irm = Irm('002')
     step_1(irm, filtered=True, show=True)
-    print(metrics(irm,show=False,write=False)) """
-    for k in range(90,101):
+    print(metrics(irm,show=False,write=False)) 
+    """ for k in range(90,101):
     id = str(k)
     if len(id) == 1:
         id = '00'+id
@@ -20,5 +20,5 @@ if __name__ == '__main__':
         step_1(irm, filtered=True, show=False)
         metrics(irm,show=False)
     except ValueError as e:
-        metrics(irm, e,show=False) 
+        metrics(irm, e,show=False)  """
 
