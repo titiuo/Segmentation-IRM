@@ -34,6 +34,7 @@ class Irm():
         self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
         #self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
         self.mean_dice = None
+        self.dtype = self.data.dtype
 
     def show_slices(self, time_index):
         """this function plots all layers of the 4D image at a specific time index"""
@@ -259,13 +260,23 @@ def step_1(irm,show=False,filtered=False):
     data = irm.data
     middle_slice_index = irm.midde_slice
     
-    working_set = irm.abs_diff.astype('uint8')	
-    edges = cv2.Canny(working_set, 100, 200)
+    working_set = irm.abs_diff.astype('uint8')
+
+    #testing formulas with std	
+    std = np.std(working_set)
+    if std < 10:
+        lowThresh = 15*std
+    elif 10 <= std < 26:
+        lowThresh = 20*std
+    else:
+        lowThresh = 15*std
+    edges = cv2.Canny(working_set, lowThresh, 1.5*lowThresh)
     kernel = np.ones((5,5), np.uint8)
 
     # Application de la fermeture (dilatation suivie d'une érosion)
     #closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
     initial_seed_point = [hough(edges)]
+    #initial_seed_point = [(97,122)]
     if len(initial_seed_point) > 1:
         raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
         
@@ -275,6 +286,7 @@ def step_1(irm,show=False,filtered=False):
     irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
     center_y,center_x=irm.seed_points[(t_ED,middle_slice_index)]
+    print(f"Initial seed point: {center_x,center_y} for slice: {middle_slice_index}.")
     
 
     #irm.images_processed.append(tmp)
@@ -283,6 +295,7 @@ def step_1(irm,show=False,filtered=False):
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice}.")
         image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered, nb_neighbours=4)
+
 
         image_segmented[center_y,center_x] = [0,0,255]
         image_segmented[center_y,center_x+1] = [0,0,255]
@@ -311,10 +324,6 @@ def step_1(irm,show=False,filtered=False):
             to_process.append((current_time,current_slice+1))
         if current_slice-1>=0 and (current_time,current_slice-1) not in irm.seed_points:
             to_process.append((current_time,current_slice-1))
-        l = [data[current_time,x,y,current_slice] for x,y in region]
-        #print(l)
-        mean = np.mean(l)
-        #print(mean)
     for k in range(irm.data.shape[-1]):
         irm.images_processed.append(temporary_dictionnary[(t_ED,k)])
     if show:
@@ -405,7 +414,7 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
         working_set = cv2.bilateralFilter(image_32f, 9, 75, 75)
     else:
         working_set = irm.data[t,:,:,z]
-    print(f"shape of working_set : {working_set.shape}")
+    #print(f"shape of working_set : {working_set.shape}")
     initial_x,initial_y = x,y
     to_explore = [(x,y)]
     explored = []
@@ -438,6 +447,10 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
                 continue 
             explored.append(couple)
     region = dilate(region)
+    """ print(np.min(image_processed), np.max(image_processed)) """
+    if image_processed.dtype == 'float32':
+        image_processed = 255 * (image_processed - np.min(image_processed)) / (np.max(image_processed) - np.min(image_processed))
+        image_processed = image_processed.astype(np.uint8)
     image_rgb = np.stack((image_processed,)*3, axis=-1)
     """ for couple in edge:
         image_rgb[couple[0],couple[1]] = [255,0,0]  """
@@ -542,7 +555,7 @@ def metrics(irm, e=None,show = False,write=True):
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     if write:
         try:
-            with open('logs.json', "r") as file:
+            with open('test_logs.json', "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
@@ -552,7 +565,7 @@ def metrics(irm, e=None,show = False,write=True):
         data[str(id)] = tmp_data
 
         # Réécrire le fichier JSON avec les nouvelles données
-        with open('logs.json', "w") as file:
+        with open('test_logs.json', "w") as file:
             json.dump(data, file, indent=4)
     return mean
     

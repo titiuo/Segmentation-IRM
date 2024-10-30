@@ -2,7 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-with open(f'logs.json', 'r') as file:
+with open(f'test_logs.json', 'r') as file:
     data = json.load(file)
 
 all_data = {}

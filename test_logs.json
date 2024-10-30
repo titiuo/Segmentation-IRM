@@ -31,12 +31,12 @@
         "Dice coefficient for slice 2": "0.883351390393644",
         "Dice coefficient for slice 3": "0.822962962962963",
         "Dice coefficient for slice 4": "0.8052830188679245",
-        "Dice coefficient for slice 5": "0.006561679790026247",
-        "Dice coefficient for slice 6": "0.011519078473722102",
+        "Dice coefficient for slice 5": "0.8421913327882257",
+        "Dice coefficient for slice 6": "0.8296075509190264",
         "Dice coefficient for slice 7": "0.8512396694214877",
         "Dice coefficient for slice 8": "0.783109404990403",
         "Dice coefficient for slice 9": "0.47953216374269003",
-        "Mean dice coefficient:": "0.6463660394760151"
+        "Mean dice coefficient:": "0.8117378520203653"
     },
     "004": {
         "Dice coefficient for slice 0": "0.8754301445285616",
@@ -57,26 +57,26 @@
         "Dice coefficient for slice 2": "0.8693978553753093",
         "Dice coefficient for slice 3": "0.8359788359788359",
         "Dice coefficient for slice 4": "0.8266033254156769",
-        "Dice coefficient for slice 5": "0.7979389032020611",
-        "Dice coefficient for slice 6": "0.767170626349892",
+        "Dice coefficient for slice 5": "0.7974963181148749",
+        "Dice coefficient for slice 6": "0.7655709342560554",
         "Dice coefficient for slice 7": "0.6586901763224181",
         "Dice coefficient for slice 8": "0.4880694143167028",
         "Dice coefficient for slice 9": "0.323943661971831",
-        "Mean dice coefficient:": "0.7390676344317153"
+        "Mean dice coefficient:": "0.738863406713613"
     },
     "006": {
         "Dice coefficient for slice 0": "0.0",
         "Dice coefficient for slice 1": "0.7543859649122807",
         "Dice coefficient for slice 2": "0.8695652173913043",
         "Dice coefficient for slice 3": "0.9385629989586949",
-        "Dice coefficient for slice 4": "0.92992700729927",
-        "Dice coefficient for slice 5": "0.8611218568665377",
-        "Dice coefficient for slice 6": "0.8405417212756662",
+        "Dice coefficient for slice 4": "0.9251101321585903",
+        "Dice coefficient for slice 5": "0.8601317318868655",
+        "Dice coefficient for slice 6": "0.013636363636363636",
         "Dice coefficient for slice 7": "0.8398950131233596",
         "Dice coefficient for slice 8": "0.7820804859529233",
         "Dice coefficient for slice 9": "0.7177033492822966",
         "Dice coefficient for slice 10": "0.06217616580310881",
-        "Mean dice coefficient:": "0.6905417982604947"
+        "Mean dice coefficient:": "0.6148406748277989"
     },
     "007": {
         "Dice coefficient for slice 0": "0.8830068819481207",
@@ -97,12 +97,12 @@
         "Dice coefficient for slice 2": "0.8699490662139219",
         "Dice coefficient for slice 3": "0.8031794095382286",
         "Dice coefficient for slice 4": "0.7593952483801296",
-        "Dice coefficient for slice 5": "0.6888657648283039",
-        "Dice coefficient for slice 6": "0.6786786786786787",
+        "Dice coefficient for slice 5": "0.6915887850467289",
+        "Dice coefficient for slice 6": "0.6802639472105579",
         "Dice coefficient for slice 7": "0.3205574912891986",
         "Dice coefficient for slice 8": "0.0855614973262032",
         "Dice coefficient for slice 9": "0.3681592039800995",
-        "Mean dice coefficient:": "0.6424667971016176"
+        "Mean dice coefficient:": "0.6428976259766481"
     },
     "009": {
         "Dice coefficient for slice 0": "0.934453781512605",
@@ -110,12 +110,12 @@
         "Dice coefficient for slice 2": "0.7401690554943036",
         "Dice coefficient for slice 3": "0.7474332648870636",
         "Dice coefficient for slice 4": "0.7734039034072114",
-        "Dice coefficient for slice 5": "0.797875871224693",
+        "Dice coefficient for slice 5": "0.7982747179827472",
         "Dice coefficient for slice 6": "0.7852459016393443",
         "Dice coefficient for slice 7": "0.8092708836310961",
         "Dice coefficient for slice 8": "0.8486759142496847",
         "Dice coefficient for slice 9": "0.6683354192740926",
-        "Mean dice coefficient:": "0.7981803728268488"
+        "Mean dice coefficient:": "0.7982202575026542"
     },
     "010": {
         "Dice coefficient for slice 0": "0.9447403462050599",
@@ -135,12 +135,12 @@
         "Dice coefficient for slice 1": "0.943382873319179",
         "Dice coefficient for slice 2": "0.836676217765043",
         "Dice coefficient for slice 3": "0.809905316824472",
-        "Dice coefficient for slice 4": "0.8250798722044729",
-        "Dice coefficient for slice 5": "0.8660714285714286",
+        "Dice coefficient for slice 4": "0.822257806244996",
+        "Dice coefficient for slice 5": "0.8696428571428572",
         "Dice coefficient for slice 6": "0.8697701826753094",
         "Dice coefficient for slice 7": "0.8169257340241797",
         "Dice coefficient for slice 8": "0.8154657293497364",
-        "Mean dice coefficient:": "0.8522943742650777"
+        "Mean dice coefficient:": "0.8523776367775167"
     },
     "012": {
         "Dice coefficient for slice 0": "0.9267879813796022",
@@ -161,12 +161,12 @@
         "Dice coefficient for slice 2": "0.7922738054896645",
         "Dice coefficient for slice 3": "0.7222222222222222",
         "Dice coefficient for slice 4": "0.714683645045762",
-        "Dice coefficient for slice 5": "0.8067772170151406",
-        "Dice coefficient for slice 6": "0.7901766479965532",
+        "Dice coefficient for slice 5": "0.8050541516245487",
+        "Dice coefficient for slice 6": "0.7927773000859846",
         "Dice coefficient for slice 7": "0.7995154451847365",
         "Dice coefficient for slice 8": "0.7996306555863343",
         "Dice coefficient for slice 9": "0.041666666666666664",
-        "Mean dice coefficient:": "0.7282817215905577"
+        "Mean dice coefficient:": "0.7283694802604417"
     },
     "014": {
         "Dice coefficient for slice 0": "0.8722936931283338",
@@ -186,12 +186,12 @@
         "Dice coefficient for slice 1": "0.9336043360433605",
         "Dice coefficient for slice 2": "0.8356302521008403",
         "Dice coefficient for slice 3": "0.8107334525939177",
-        "Dice coefficient for slice 4": "0.8388118811881188",
-        "Dice coefficient for slice 5": "0.8150864326872708",
+        "Dice coefficient for slice 4": "0.8583657587548638",
+        "Dice coefficient for slice 5": "0.8212610734757686",
         "Dice coefficient for slice 6": "0.8223637650389243",
         "Dice coefficient for slice 7": "0.7275242047026279",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.7424482283439472"
+        "Mean dice coefficient:": "0.7453069526056407"
     },
     "016": {
         "Dice coefficient for slice 0": "0.9215686274509803",
@@ -199,12 +199,12 @@
         "Dice coefficient for slice 2": "0.84",
         "Dice coefficient for slice 3": "0.8208594881699662",
         "Dice coefficient for slice 4": "0.8619624613922547",
-        "Dice coefficient for slice 5": "0.8518806744487678",
-        "Dice coefficient for slice 6": "0.7914438502673797",
+        "Dice coefficient for slice 5": "0.8512847132104854",
+        "Dice coefficient for slice 6": "0.7903022670025189",
         "Dice coefficient for slice 7": "0.7996201329534662",
         "Dice coefficient for slice 8": "0.25206124852767964",
         "Dice coefficient for slice 9": "0.22312925170068026",
-        "Mean dice coefficient:": "0.7266648231966533"
+        "Mean dice coefficient:": "0.7264910687463391"
     },
     "017": {
         "Dice coefficient for slice 0": "0.8854710244438341",
@@ -248,11 +248,11 @@
         "Dice coefficient for slice 1": "0.36624775583482944",
         "Dice coefficient for slice 2": "0.25321597833446174",
         "Dice coefficient for slice 3": "0.10938775510204081",
-        "Dice coefficient for slice 4": "0.695457930007446",
-        "Dice coefficient for slice 5": "0.7357980162308386",
+        "Dice coefficient for slice 4": "0.7159590043923866",
+        "Dice coefficient for slice 5": "0.7570422535211268",
         "Dice coefficient for slice 6": "0.1388888888888889",
         "Dice coefficient for slice 7": "0.015503875968992248",
-        "Mean dice coefficient:": "0.39691137183341657"
+        "Mean dice coefficient:": "0.40212953579282024"
     },
     "021": {
         "Dice coefficient for slice 0": "0.8757687576875769",
@@ -281,49 +281,49 @@
         "Dice coefficient for slice 0": "0.773851590106007",
         "Dice coefficient for slice 1": "0.6705426356589147",
         "Dice coefficient for slice 2": "0.6675392670157068",
-        "Dice coefficient for slice 3": "0.6293206197854588",
-        "Dice coefficient for slice 4": "0.7111111111111111",
-        "Dice coefficient for slice 5": "0.7175572519083969",
+        "Dice coefficient for slice 3": "0.6309523809523809",
+        "Dice coefficient for slice 4": "0.17303822937625754",
+        "Dice coefficient for slice 5": "0.11091234347048301",
         "Dice coefficient for slice 6": "0.700507614213198",
         "Dice coefficient for slice 7": "0.5683453237410072",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.6043083792822"
+        "Mean dice coefficient:": "0.4772988205037728"
     },
     "024": {
         "Dice coefficient for slice 0": "0.8761194029850746",
         "Dice coefficient for slice 1": "0.8696296296296296",
-        "Dice coefficient for slice 2": "0.7098402018502944",
-        "Dice coefficient for slice 3": "0.04",
-        "Dice coefficient for slice 4": "0.004405286343612335",
-        "Dice coefficient for slice 5": "0.08945686900958466",
-        "Dice coefficient for slice 6": "0.03418803418803419",
+        "Dice coefficient for slice 2": "0.7227310574521232",
+        "Dice coefficient for slice 3": "0.21568627450980393",
+        "Dice coefficient for slice 4": "0.02304147465437788",
+        "Dice coefficient for slice 5": "0.045307443365695796",
+        "Dice coefficient for slice 6": "0.08630952380952381",
         "Dice coefficient for slice 7": "0.03333333333333333",
-        "Mean dice coefficient:": "0.33212159466744534"
+        "Mean dice coefficient:": "0.35901976746744524"
     },
     "025": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Dice coefficient for slice 0": "0.8217317487266553",
+        "Dice coefficient for slice 1": "0.9380877742946708",
+        "Dice coefficient for slice 2": "0.8914885034288019",
+        "Dice coefficient for slice 3": "0.8412767818102318",
+        "Dice coefficient for slice 4": "0.7150569886022795",
+        "Dice coefficient for slice 5": "0.6453531598513012",
+        "Dice coefficient for slice 6": "0.3761562178828366",
+        "Dice coefficient for slice 7": "0.35294117647058826",
+        "Dice coefficient for slice 8": "0.3900709219858156",
+        "Mean dice coefficient:": "0.663573697005909"
     },
     "026": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Dice coefficient for slice 0": "0.893048128342246",
+        "Dice coefficient for slice 1": "0.005797101449275362",
+        "Dice coefficient for slice 2": "0.251005631536605",
+        "Dice coefficient for slice 3": "0.007123775601068566",
+        "Dice coefficient for slice 4": "0.6130434782608696",
+        "Dice coefficient for slice 5": "0.6820809248554913",
+        "Dice coefficient for slice 6": "0.5329768270944741",
+        "Dice coefficient for slice 7": "0.47738693467336685",
+        "Dice coefficient for slice 8": "0.5110294117647058",
+        "Dice coefficient for slice 9": "0.035864978902953586",
+        "Mean dice coefficient:": "0.40093571924810567"
     },
     "027": {
         "Dice coefficient for slice 0": "0.6339814032121724",
@@ -331,25 +331,25 @@
         "Dice coefficient for slice 2": "0.028017241379310345",
         "Dice coefficient for slice 3": "0.019650655021834062",
         "Dice coefficient for slice 4": "0.02187120291616039",
-        "Dice coefficient for slice 5": "0.007989347536617843",
+        "Dice coefficient for slice 5": "0.005326231691078562",
         "Dice coefficient for slice 6": "0.015789473684210527",
         "Dice coefficient for slice 7": "0.03314917127071823",
         "Dice coefficient for slice 8": "0.0",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.16629837062886293"
+        "Mean dice coefficient:": "0.16603205904430898"
     },
     "028": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
+        "Dice coefficient for slice 0": "0.9471332836932241",
+        "Dice coefficient for slice 1": "0.8042414355628059",
+        "Dice coefficient for slice 2": "0.6272401433691757",
+        "Dice coefficient for slice 3": "0.7159904534606205",
+        "Dice coefficient for slice 4": "0.7564766839378239",
+        "Dice coefficient for slice 5": "0.7948717948717948",
+        "Dice coefficient for slice 6": "0.7092651757188498",
+        "Dice coefficient for slice 7": "0.592964824120603",
+        "Dice coefficient for slice 8": "0.15384615384615385",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Mean dice coefficient:": "0.6102029948581051"
     },
     "029": {
         "Dice coefficient for slice 0": "0.43322475570032576",
@@ -357,13 +357,13 @@
         "Dice coefficient for slice 2": "0.7878369039391845",
         "Dice coefficient for slice 3": "0.7669576897246474",
         "Dice coefficient for slice 4": "0.6564030790762772",
-        "Dice coefficient for slice 5": "0.020855057351407715",
-        "Dice coefficient for slice 6": "0.8019619865113428",
+        "Dice coefficient for slice 5": "0.7630208333333334",
+        "Dice coefficient for slice 6": "0.8014751075599262",
         "Dice coefficient for slice 7": "0.8383084577114428",
         "Dice coefficient for slice 8": "0.8752",
         "Dice coefficient for slice 9": "0.8763440860215054",
         "Dice coefficient for slice 10": "0.7080745341614907",
-        "Mean dice coefficient:": "0.6992440110984188"
+        "Mean dice coefficient:": "0.7666693653739197"
     },
     "030": {
         "Dice coefficient for slice 0": "0.0",
@@ -382,14 +382,14 @@
         "Dice coefficient for slice 0": "0.9036697247706422",
         "Dice coefficient for slice 1": "0.8710540395933655",
         "Dice coefficient for slice 2": "0.8128523111612176",
-        "Dice coefficient for slice 3": "0.5707434052757794",
-        "Dice coefficient for slice 4": "0.6396917148362236",
-        "Dice coefficient for slice 5": "0.6282940360610264",
-        "Dice coefficient for slice 6": "0.033121019108280254",
-        "Dice coefficient for slice 7": "0.7350427350427351",
+        "Dice coefficient for slice 3": "0.5690276110444178",
+        "Dice coefficient for slice 4": "0.034576888080072796",
+        "Dice coefficient for slice 5": "0.0",
+        "Dice coefficient for slice 6": "0.0",
+        "Dice coefficient for slice 7": "0.0",
         "Dice coefficient for slice 8": "0.5605381165919282",
         "Dice coefficient for slice 9": "0.5121951219512195",
-        "Mean dice coefficient:": "0.6267202224392419"
+        "Mean dice coefficient:": "0.42639138131928644"
     },
     "032": {
         "Dice coefficient for slice 0": "0.9402092675635276",
@@ -397,132 +397,132 @@
         "Dice coefficient for slice 2": "0.7190283400809716",
         "Dice coefficient for slice 3": "0.7576642335766424",
         "Dice coefficient for slice 4": "0.8203342618384402",
-        "Dice coefficient for slice 5": "0.8492176386913229",
-        "Dice coefficient for slice 6": "0.8713204373423045",
+        "Dice coefficient for slice 5": "0.8508522727272727",
+        "Dice coefficient for slice 6": "0.8435609334485739",
         "Dice coefficient for slice 7": "0.821301775147929",
         "Dice coefficient for slice 8": "0.9135338345864662",
         "Dice coefficient for slice 9": "0.10354223433242507",
-        "Mean dice coefficient:": "0.7717354297733546"
+        "Mean dice coefficient:": "0.7691229427875765"
     },
     "033": {
         "Dice coefficient for slice 0": "0.0",
         "Dice coefficient for slice 1": "0.0",
         "Dice coefficient for slice 2": "0.9244249726177437",
-        "Dice coefficient for slice 3": "0.7973219720024346",
-        "Dice coefficient for slice 4": "0.6910505836575875",
-        "Dice coefficient for slice 5": "0.6411657559198543",
-        "Dice coefficient for slice 6": "0.6122448979591837",
-        "Dice coefficient for slice 7": "0.6629834254143646",
+        "Dice coefficient for slice 3": "0.7965895249695494",
+        "Dice coefficient for slice 4": "0.026004728132387706",
+        "Dice coefficient for slice 5": "0.015915119363395226",
+        "Dice coefficient for slice 6": "0.08963093145869948",
+        "Dice coefficient for slice 7": "0.04048582995951417",
         "Dice coefficient for slice 8": "0.7202216066481995",
         "Dice coefficient for slice 9": "0.014915254237288136",
-        "Mean dice coefficient:": "0.5064328468456656"
+        "Mean dice coefficient:": "0.26281879673867775"
     },
     "034": {
         "Dice coefficient for slice 0": "0.8042468480424685",
         "Dice coefficient for slice 1": "0.022675736961451247",
         "Dice coefficient for slice 2": "0.6078431372549019",
-        "Dice coefficient for slice 3": "0.46543330087633883",
-        "Dice coefficient for slice 4": "0.0830945558739255",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.4399092970521542",
+        "Dice coefficient for slice 3": "0.4684159378036929",
+        "Dice coefficient for slice 4": "0.5714285714285714",
+        "Dice coefficient for slice 5": "0.011379800853485065",
+        "Dice coefficient for slice 6": "0.5585585585585585",
+        "Dice coefficient for slice 7": "0.45045045045045046",
         "Dice coefficient for slice 8": "0.041025641025641026",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.2464228517086881"
+        "Mean dice coefficient:": "0.3536024682379221"
     },
     "035": {
-        "Dice coefficient for slice 0": "0.8078817733990148",
-        "Dice coefficient for slice 1": "0.795088257866462",
-        "Dice coefficient for slice 2": "0.6793103448275862",
-        "Dice coefficient for slice 3": "0.7234401349072512",
-        "Dice coefficient for slice 4": "0.5792452830188679",
-        "Dice coefficient for slice 5": "0.6181818181818182",
-        "Dice coefficient for slice 6": "0.6679920477137177",
-        "Dice coefficient for slice 7": "0.6356756756756756",
-        "Dice coefficient for slice 8": "0.6081258191349934",
-        "Dice coefficient for slice 9": "0.1947261663286004",
-        "Dice coefficient for slice 10": "0.08187134502923976",
+        "Dice coefficient for slice 0": "0.0",
+        "Dice coefficient for slice 1": "0.0",
+        "Dice coefficient for slice 2": "0.0",
+        "Dice coefficient for slice 3": "0.0",
+        "Dice coefficient for slice 4": "0.0",
+        "Dice coefficient for slice 5": "0.0",
+        "Dice coefficient for slice 6": "0.0",
+        "Dice coefficient for slice 7": "0.0",
+        "Dice coefficient for slice 8": "0.0",
+        "Dice coefficient for slice 9": "0.0",
+        "Dice coefficient for slice 10": "0.0",
         "Dice coefficient for slice 11": "0.0",
-        "Dice coefficient for slice 12": "0.17594254937163376",
-        "Mean dice coefficient:": "0.5051908627272969"
+        "Dice coefficient for slice 12": "0.0",
+        "Mean dice coefficient:": "0.0"
     },
     "036": {
         "Dice coefficient for slice 0": "0.9227990970654627",
         "Dice coefficient for slice 1": "0.8456175298804781",
         "Dice coefficient for slice 2": "0.6497641509433962",
         "Dice coefficient for slice 3": "0.735964424680378",
-        "Dice coefficient for slice 4": "0.7794746487477092",
-        "Dice coefficient for slice 5": "0.6196660482374768",
+        "Dice coefficient for slice 4": "0.75125",
+        "Dice coefficient for slice 5": "0.6247689463955638",
         "Dice coefficient for slice 6": "0.2839506172839506",
         "Dice coefficient for slice 7": "0.019417475728155338",
-        "Mean dice coefficient:": "0.607081749070876"
+        "Mean dice coefficient:": "0.6041915302471732"
     },
     "037": {
         "Dice coefficient for slice 0": "0.627906976744186",
-        "Dice coefficient for slice 1": "0.6559139784946236",
-        "Dice coefficient for slice 2": "0.4623115577889447",
-        "Dice coefficient for slice 3": "0.43914081145584727",
-        "Dice coefficient for slice 4": "0.477751756440281",
-        "Dice coefficient for slice 5": "0.5924276169265034",
-        "Dice coefficient for slice 6": "0.15676959619952494",
-        "Mean dice coefficient:": "0.4874603277214159"
+        "Dice coefficient for slice 1": "0.0",
+        "Dice coefficient for slice 2": "0.0",
+        "Dice coefficient for slice 3": "0.018072289156626505",
+        "Dice coefficient for slice 4": "0.17827298050139276",
+        "Dice coefficient for slice 5": "0.17714285714285713",
+        "Dice coefficient for slice 6": "0.14797136038186157",
+        "Mean dice coefficient:": "0.1641952091324177"
     },
     "038": {
-        "Dice coefficient for slice 0": "0.9136363636363637",
-        "Dice coefficient for slice 1": "0.8227254978524015",
-        "Dice coefficient for slice 2": "0.8127262335682988",
-        "Dice coefficient for slice 3": "0.8639783908933051",
-        "Dice coefficient for slice 4": "0.7794310722100657",
-        "Dice coefficient for slice 5": "0.8310185185185185",
-        "Dice coefficient for slice 6": "0.8591780821917808",
-        "Dice coefficient for slice 7": "0.024279210925644917",
-        "Mean dice coefficient:": "0.7383716712245473"
+        "Dice coefficient for slice 0": "0.0",
+        "Dice coefficient for slice 1": "0.0",
+        "Dice coefficient for slice 2": "0.0",
+        "Dice coefficient for slice 3": "0.0",
+        "Dice coefficient for slice 4": "0.0",
+        "Dice coefficient for slice 5": "0.0",
+        "Dice coefficient for slice 6": "0.0",
+        "Dice coefficient for slice 7": "0.0",
+        "Mean dice coefficient:": "0.0"
     },
     "039": {
         "Dice coefficient for slice 0": "0.8271812080536913",
         "Dice coefficient for slice 1": "0.514336917562724",
         "Dice coefficient for slice 2": "0.009216589861751152",
-        "Dice coefficient for slice 3": "0.6342991386061081",
-        "Dice coefficient for slice 4": "0.16727272727272727",
-        "Dice coefficient for slice 5": "0.1464088397790055",
+        "Dice coefficient for slice 3": "0.6449106449106449",
+        "Dice coefficient for slice 4": "0.6949006050129646",
+        "Dice coefficient for slice 5": "0.5738575982996812",
         "Dice coefficient for slice 6": "0.1930783242258652",
         "Dice coefficient for slice 7": "0.11764705882352941",
         "Dice coefficient for slice 8": "0.04669260700389105",
-        "Mean dice coefficient:": "0.2951259345765881"
+        "Mean dice coefficient:": "0.4024246170838603"
     },
     "040": {
         "Dice coefficient for slice 0": "0.8175092478421702",
-        "Dice coefficient for slice 1": "0.7988023952095809",
-        "Dice coefficient for slice 2": "0.024844720496894408",
-        "Dice coefficient for slice 3": "0.016018306636155607",
-        "Dice coefficient for slice 4": "0.009950248756218905",
-        "Dice coefficient for slice 5": "0.0990990990990991",
-        "Dice coefficient for slice 6": "0.029887920298879204",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.17961119383389984"
+        "Dice coefficient for slice 1": "0.838635049161365",
+        "Dice coefficient for slice 2": "0.8575518969219756",
+        "Dice coefficient for slice 3": "0.009184845005740528",
+        "Dice coefficient for slice 4": "0.024691358024691357",
+        "Dice coefficient for slice 5": "0.0136986301369863",
+        "Dice coefficient for slice 6": "0.047407407407407405",
+        "Dice coefficient for slice 7": "0.04056795131845842",
+        "Dice coefficient for slice 8": "0.018433179723502304",
+        "Dice coefficient for slice 9": "0.7479674796747967",
+        "Mean dice coefficient:": "0.3415647045217094"
     },
     "041": {
         "Dice coefficient for slice 0": "0.9438390611902766",
         "Dice coefficient for slice 1": "0.7721518987341772",
         "Dice coefficient for slice 2": "0.735593220338983",
-        "Dice coefficient for slice 3": "0.009983361064891847",
-        "Dice coefficient for slice 4": "0.21641791044776118",
+        "Dice coefficient for slice 3": "0.016638935108153077",
+        "Dice coefficient for slice 4": "0.021164021164021163",
         "Dice coefficient for slice 5": "0.32926829268292684",
-        "Mean dice coefficient:": "0.5012089574098361"
+        "Mean dice coefficient:": "0.4697759048697563"
     },
     "042": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.8540845070422535",
-        "Dice coefficient for slice 5": "0.005185825410544511",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.09547448138364421"
+        "Dice coefficient for slice 0": "0.9513343799058085",
+        "Dice coefficient for slice 1": "0.8812989921612542",
+        "Dice coefficient for slice 2": "0.8521046643913538",
+        "Dice coefficient for slice 3": "0.8828828828828829",
+        "Dice coefficient for slice 4": "0.8547297297297297",
+        "Dice coefficient for slice 5": "0.8702865761689291",
+        "Dice coefficient for slice 6": "0.8681863230921705",
+        "Dice coefficient for slice 7": "0.8845577211394303",
+        "Dice coefficient for slice 8": "0.9411764705882353",
+        "Mean dice coefficient:": "0.8873953044510882"
     },
     "043": {
         "Dice coefficient for slice 0": "0.8184873949579832",
@@ -544,12 +544,12 @@
         "Dice coefficient for slice 1": "0.8323232323232324",
         "Dice coefficient for slice 2": "0.8033373063170441",
         "Dice coefficient for slice 3": "0.7807900852052673",
-        "Dice coefficient for slice 4": "0.8217821782178217",
-        "Dice coefficient for slice 5": "0.8680618744313012",
+        "Dice coefficient for slice 4": "0.8043660789252729",
+        "Dice coefficient for slice 5": "0.8955752212389381",
         "Dice coefficient for slice 6": "0.9586056644880174",
         "Dice coefficient for slice 7": "0.9179755671902269",
         "Dice coefficient for slice 8": "0.2608695652173913",
-        "Mean dice coefficient:": "0.7996434620743879"
+        "Mean dice coefficient:": "0.8007653784649532"
     },
     "045": {
         "Dice coefficient for slice 0": "0.9308221658819268",
@@ -557,55 +557,55 @@
         "Dice coefficient for slice 2": "0.8239905919247354",
         "Dice coefficient for slice 3": "0.7037037037037037",
         "Dice coefficient for slice 4": "0.7869362363919129",
-        "Dice coefficient for slice 5": "0.6735751295336787",
+        "Dice coefficient for slice 5": "0.6770025839793282",
         "Dice coefficient for slice 6": "0.7875307629204266",
         "Dice coefficient for slice 7": "0.1405152224824356",
-        "Mean dice coefficient:": "0.7066361063041006"
+        "Mean dice coefficient:": "0.7070645381098067"
     },
     "046": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.006622516556291391",
-        "Dice coefficient for slice 3": "0.00533689126084056",
-        "Dice coefficient for slice 4": "0.0035149384885764497",
-        "Dice coefficient for slice 5": "0.007804878048780488",
-        "Dice coefficient for slice 6": "0.002506265664160401",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.0028650544465165877"
+        "Dice coefficient for slice 0": "0.9398170438131921",
+        "Dice coefficient for slice 1": "0.7919237240605721",
+        "Dice coefficient for slice 2": "0.7776649746192893",
+        "Dice coefficient for slice 3": "0.6465467208357516",
+        "Dice coefficient for slice 4": "0.7617486338797814",
+        "Dice coefficient for slice 5": "0.7586626139817629",
+        "Dice coefficient for slice 6": "0.6655462184873949",
+        "Dice coefficient for slice 7": "0.5358024691358024",
+        "Dice coefficient for slice 8": "0.5458515283842795",
+        "Mean dice coefficient:": "0.713729325244203"
     },
     "047": {
         "Dice coefficient for slice 0": "0.8132956152758133",
         "Dice coefficient for slice 1": "0.6299342105263158",
         "Dice coefficient for slice 2": "0.6081081081081081",
-        "Dice coefficient for slice 3": "0.7503628447024674",
-        "Dice coefficient for slice 4": "0.8783709411117226",
-        "Dice coefficient for slice 5": "0.7231352718078382",
+        "Dice coefficient for slice 3": "0.754880694143167",
+        "Dice coefficient for slice 4": "0.8746548868028713",
+        "Dice coefficient for slice 5": "0.8330444829578278",
         "Dice coefficient for slice 6": "0.9292502639915523",
         "Dice coefficient for slice 7": "0.9163050216986981",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.6943069196913908"
+        "Mean dice coefficient:": "0.706608142611595"
     },
     "048": {
         "Dice coefficient for slice 0": "0.8601769911504424",
         "Dice coefficient for slice 1": "0.8627450980392157",
         "Dice coefficient for slice 2": "0.7247885491216656",
         "Dice coefficient for slice 3": "0.6862619808306709",
-        "Dice coefficient for slice 4": "0.01685985247629083",
-        "Dice coefficient for slice 5": "0.35135135135135137",
+        "Dice coefficient for slice 4": "0.010570824524312896",
+        "Dice coefficient for slice 5": "0.3615702479338843",
         "Dice coefficient for slice 6": "0.25595238095238093",
         "Dice coefficient for slice 7": "0.025157232704402517",
-        "Mean dice coefficient:": "0.4729116795783025"
+        "Mean dice coefficient:": "0.4734029131571219"
     },
     "049": {
         "Dice coefficient for slice 0": "0.0",
         "Dice coefficient for slice 1": "0.9863481228668942",
         "Dice coefficient for slice 2": "0.8507317073170731",
-        "Dice coefficient for slice 3": "0.8783685360524399",
-        "Dice coefficient for slice 4": "0.8674698795180723",
+        "Dice coefficient for slice 3": "0.8782798833819242",
+        "Dice coefficient for slice 4": "0.8667032364234778",
         "Dice coefficient for slice 5": "0.9281553398058252",
         "Dice coefficient for slice 6": "0.8648648648648649",
-        "Mean dice coefficient:": "0.7679912072035957"
+        "Mean dice coefficient:": "0.7678690220942943"
     },
     "050": {
         "Dice coefficient for slice 0": "0.9533973674848808",
@@ -613,12 +613,12 @@
         "Dice coefficient for slice 2": "0.8932203389830509",
         "Dice coefficient for slice 3": "0.8198949644732777",
         "Dice coefficient for slice 4": "0.822053482997689",
-        "Dice coefficient for slice 5": "0.8469281499479347",
+        "Dice coefficient for slice 5": "0.844923504867872",
         "Dice coefficient for slice 6": "0.8298387096774194",
         "Dice coefficient for slice 7": "0.8023012552301255",
         "Dice coefficient for slice 8": "0.5423312883435583",
         "Dice coefficient for slice 9": "0.5789473684210527",
-        "Mean dice coefficient:": "0.7994846355370857"
+        "Mean dice coefficient:": "0.7992841710290796"
     },
     "051": {
         "Dice coefficient for slice 0": "0.8853704876504117",
@@ -626,12 +626,12 @@
         "Dice coefficient for slice 2": "0.7571606475716065",
         "Dice coefficient for slice 3": "0.68625",
         "Dice coefficient for slice 4": "0.8083623693379791",
-        "Dice coefficient for slice 5": "0.8079859072225485",
-        "Dice coefficient for slice 6": "0.8740359897172236",
+        "Dice coefficient for slice 5": "0.8051795173631549",
+        "Dice coefficient for slice 6": "0.8986784140969163",
         "Dice coefficient for slice 7": "0.8364888123924269",
         "Dice coefficient for slice 8": "0.15034168564920272",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.6695275337151241"
+        "Mean dice coefficient:": "0.671711137167154"
     },
     "052": {
         "Dice coefficient for slice 0": "0.8227228207639569",
@@ -659,11 +659,11 @@
         "Dice coefficient for slice 1": "0.6155429747812661",
         "Dice coefficient for slice 2": "0.7886241352805534",
         "Dice coefficient for slice 3": "0.8483741322616003",
-        "Dice coefficient for slice 4": "0.8212244897959183",
-        "Dice coefficient for slice 5": "0.8241010689990281",
+        "Dice coefficient for slice 4": "0.8260162601626017",
+        "Dice coefficient for slice 5": "0.8218111002921129",
         "Dice coefficient for slice 6": "0.8679722046746684",
         "Dice coefficient for slice 7": "0.031746031746031744",
-        "Mean dice coefficient:": "0.7049128536187637"
+        "Mean dice coefficient:": "0.7052255788262346"
     },
     "055": {
         "Dice coefficient for slice 0": "0.8626943005181347",
@@ -671,23 +671,23 @@
         "Dice coefficient for slice 2": "0.006256517205422315",
         "Dice coefficient for slice 3": "0.6724683544303798",
         "Dice coefficient for slice 4": "0.54634487583071",
-        "Dice coefficient for slice 5": "0.7789623312011372",
+        "Dice coefficient for slice 5": "0.7806955287437899",
         "Dice coefficient for slice 6": "0.634232121922626",
         "Dice coefficient for slice 7": "0.6015625",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.4681056054401301"
+        "Mean dice coefficient:": "0.4682981829448693"
     },
     "056": {
         "Dice coefficient for slice 0": "0.8816725978647687",
         "Dice coefficient for slice 1": "0.807361963190184",
         "Dice coefficient for slice 2": "0.8623497479643273",
         "Dice coefficient for slice 3": "0.7452948557089084",
-        "Dice coefficient for slice 4": "0.7218664226898445",
-        "Dice coefficient for slice 5": "0.7481636935991606",
+        "Dice coefficient for slice 4": "0.7159926470588235",
+        "Dice coefficient for slice 5": "0.7473794549266247",
         "Dice coefficient for slice 6": "0.7923697725605282",
         "Dice coefficient for slice 7": "0.7295597484276729",
         "Dice coefficient for slice 8": "0.0125",
-        "Mean dice coefficient:": "0.700126533556155"
+        "Mean dice coefficient:": "0.6993867541890931"
     },
     "057": {
         "Dice coefficient for slice 0": "0.0",
@@ -705,24 +705,24 @@
         "Dice coefficient for slice 1": "0.8157894736842105",
         "Dice coefficient for slice 2": "0.8743809095002252",
         "Dice coefficient for slice 3": "0.5833333333333334",
-        "Dice coefficient for slice 4": "0.7417433676231727",
-        "Dice coefficient for slice 5": "0.7555970149253731",
+        "Dice coefficient for slice 4": "0.7410617551462622",
+        "Dice coefficient for slice 5": "0.7587168758716876",
         "Dice coefficient for slice 6": "0.09267563527653214",
         "Dice coefficient for slice 7": "0.8344226579520697",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.6203149420695392"
+        "Mean dice coefficient:": "0.6205858585661397"
     },
     "059": {
-        "Dice coefficient for slice 0": "0.8747913188647746",
-        "Dice coefficient for slice 1": "0.0",
+        "Dice coefficient for slice 0": "0.870391061452514",
+        "Dice coefficient for slice 1": "0.007804878048780488",
         "Dice coefficient for slice 2": "0.0",
         "Dice coefficient for slice 3": "0.0",
         "Dice coefficient for slice 4": "0.017118402282453638",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
+        "Dice coefficient for slice 5": "0.004016064257028112",
+        "Dice coefficient for slice 6": "0.002512562814070352",
+        "Dice coefficient for slice 7": "0.1260096930533118",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.0991010801274698"
+        "Mean dice coefficient:": "0.11420585132312872"
     },
     "060": {
         "Dice coefficient for slice 0": "0.8872549019607843",
@@ -737,16 +737,16 @@
         "Mean dice coefficient:": "0.8237712855876672"
     },
     "061": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.03225806451612903",
-        "Dice coefficient for slice 3": "0.01507537688442211",
-        "Dice coefficient for slice 4": "0.013071895424836602",
-        "Dice coefficient for slice 5": "0.006322444678609062",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
+        "Dice coefficient for slice 0": "0.9607940446650124",
+        "Dice coefficient for slice 1": "0.9545032497678737",
+        "Dice coefficient for slice 2": "0.9136363636363637",
+        "Dice coefficient for slice 3": "0.8424153166421208",
+        "Dice coefficient for slice 4": "0.7450271247739603",
+        "Dice coefficient for slice 5": "0.49910873440285203",
+        "Dice coefficient for slice 6": "0.3543307086614173",
+        "Dice coefficient for slice 7": "0.6706586826347305",
         "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.007414197944888534"
+        "Mean dice coefficient:": "0.6600526916871479"
     },
     "062": {
         "Dice coefficient for slice 0": "0.951129363449692",
@@ -754,23 +754,23 @@
         "Dice coefficient for slice 2": "0.8836826962597616",
         "Dice coefficient for slice 3": "0.8639000446229362",
         "Dice coefficient for slice 4": "0.8160676532769556",
-        "Dice coefficient for slice 5": "0.8193592365371506",
+        "Dice coefficient for slice 5": "0.8185538881309686",
         "Dice coefficient for slice 6": "0.8496302382908792",
         "Dice coefficient for slice 7": "0.8477751756440282",
         "Dice coefficient for slice 8": "0.8831168831168831",
         "Dice coefficient for slice 9": "0.36363636363636365",
-        "Mean dice coefficient:": "0.8233570531322135"
+        "Mean dice coefficient:": "0.8232765182915953"
     },
     "063": {
-        "Dice coefficient for slice 0": "0.10365853658536585",
-        "Dice coefficient for slice 1": "0.4728434504792332",
-        "Dice coefficient for slice 2": "0.5956454121306376",
-        "Dice coefficient for slice 3": "0.5392428439519852",
-        "Dice coefficient for slice 4": "0.2918781725888325",
-        "Dice coefficient for slice 5": "0.3054003724394786",
-        "Dice coefficient for slice 6": "0.019230769230769232",
-        "Dice coefficient for slice 7": "0.0",
-        "Mean dice coefficient:": "0.29098744467578774"
+        "Dice coefficient for slice 0": "0.014893617021276596",
+        "Dice coefficient for slice 1": "0.28802880288028804",
+        "Dice coefficient for slice 2": "0.008859357696566999",
+        "Dice coefficient for slice 3": "0.4501480750246792",
+        "Dice coefficient for slice 4": "0.48081264108352145",
+        "Dice coefficient for slice 5": "0.24313725490196078",
+        "Dice coefficient for slice 6": "0.5759637188208617",
+        "Dice coefficient for slice 7": "0.08163265306122448",
+        "Mean dice coefficient:": "0.2679345150612974"
     },
     "064": {
         "Dice coefficient for slice 0": "0.9122438255386233",
@@ -797,16 +797,16 @@
         "Mean dice coefficient:": "0.9060516357315656"
     },
     "066": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Dice coefficient for slice 0": "0.8679775280898876",
+        "Dice coefficient for slice 1": "0.9318541996830428",
+        "Dice coefficient for slice 2": "0.8658008658008658",
+        "Dice coefficient for slice 3": "0.7828185328185329",
+        "Dice coefficient for slice 4": "0.8266801414855988",
+        "Dice coefficient for slice 5": "0.8188882247459653",
+        "Dice coefficient for slice 6": "0.8742304309586632",
+        "Dice coefficient for slice 7": "0.8413284132841329",
+        "Dice coefficient for slice 8": "0.2047244094488189",
+        "Mean dice coefficient:": "0.7793669718128342"
     },
     "067": {
         "Dice coefficient for slice 0": "0.9657501205981669",
@@ -814,22 +814,22 @@
         "Dice coefficient for slice 2": "0.7985074626865671",
         "Dice coefficient for slice 3": "0.7907501410039481",
         "Dice coefficient for slice 4": "0.8361916026020106",
-        "Dice coefficient for slice 5": "0.7794404684450228",
-        "Dice coefficient for slice 6": "0.6796296296296296",
+        "Dice coefficient for slice 5": "0.7770534550195567",
+        "Dice coefficient for slice 6": "0.6845018450184502",
         "Dice coefficient for slice 7": "0.4844517184942717",
         "Dice coefficient for slice 8": "0.7562642369020501",
         "Dice coefficient for slice 9": "0.7725321888412017",
-        "Mean dice coefficient:": "0.7758832780307553"
+        "Mean dice coefficient:": "0.7761317982270908"
     },
     "068": {
         "Dice coefficient for slice 0": "0.9401617250673855",
         "Dice coefficient for slice 1": "0.9371002132196162",
-        "Dice coefficient for slice 2": "0.9028840494408475",
-        "Dice coefficient for slice 3": "0.009467455621301775",
-        "Dice coefficient for slice 4": "0.09919028340080972",
+        "Dice coefficient for slice 2": "0.9022379269729093",
+        "Dice coefficient for slice 3": "0.8371786420566908",
+        "Dice coefficient for slice 4": "0.8566340160284951",
         "Dice coefficient for slice 5": "0.8016085790884718",
         "Dice coefficient for slice 6": "0.536144578313253",
-        "Mean dice coefficient:": "0.6037938405930979"
+        "Mean dice coefficient:": "0.8301522401066889"
     },
     "069": {
         "Dice coefficient for slice 0": "0.9058927000879508",
@@ -855,13 +855,13 @@
         "Dice coefficient for slice 1": "0.9175757575757576",
         "Dice coefficient for slice 2": "0.9145473041709054",
         "Dice coefficient for slice 3": "0.8234567901234567",
-        "Dice coefficient for slice 4": "0.79191128506197",
-        "Dice coefficient for slice 5": "0.7928513403736799",
-        "Dice coefficient for slice 6": "0.8103837471783296",
+        "Dice coefficient for slice 4": "0.7863695937090432",
+        "Dice coefficient for slice 5": "0.03674540682414698",
+        "Dice coefficient for slice 6": "0.019801980198019802",
         "Dice coefficient for slice 7": "0.7296",
         "Dice coefficient for slice 8": "0.6731391585760518",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.7405068881602426"
+        "Mean dice coefficient:": "0.5852839489719656"
     },
     "072": {
         "Dice coefficient for slice 0": "0.9461538461538461",
@@ -875,14 +875,14 @@
         "Mean dice coefficient:": "0.7426127921205139"
     },
     "073": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Dice coefficient for slice 0": "0.6143187066974596",
+        "Dice coefficient for slice 1": "0.8666666666666667",
+        "Dice coefficient for slice 2": "0.8735332464146024",
+        "Dice coefficient for slice 3": "0.030167597765363128",
+        "Dice coefficient for slice 4": "0.5199652777777778",
+        "Dice coefficient for slice 5": "0.7309941520467836",
+        "Dice coefficient for slice 6": "0.6846153846153846",
+        "Mean dice coefficient:": "0.617180147426291"
     },
     "074": {
         "Dice coefficient for slice 0": "0.0",
@@ -901,16 +901,16 @@
         "Dice coefficient for slice 2": "0.7229129662522202",
         "Dice coefficient for slice 3": "0.8612670408981555",
         "Dice coefficient for slice 4": "0.7831655992680695",
-        "Dice coefficient for slice 5": "0.8136882129277566",
-        "Dice coefficient for slice 6": "0.013961605584642234",
-        "Dice coefficient for slice 7": "0.00816326530612245",
-        "Dice coefficient for slice 8": "0.028397565922920892",
-        "Dice coefficient for slice 9": "0.07092198581560284",
+        "Dice coefficient for slice 5": "0.8148148148148148",
+        "Dice coefficient for slice 6": "0.7737068965517241",
+        "Dice coefficient for slice 7": "0.10894941634241245",
+        "Dice coefficient for slice 8": "0.8658109684947491",
+        "Dice coefficient for slice 9": "0.8314285714285714",
         "Dice coefficient for slice 10": "0.8280701754385965",
         "Dice coefficient for slice 11": "0.8122743682310469",
         "Dice coefficient for slice 12": "0.7",
         "Dice coefficient for slice 13": "0.16666666666666666",
-        "Mean dice coefficient:": "0.5396045096563327"
+        "Mean dice coefficient:": "0.7152886548045629"
     },
     "076": {
         "Dice coefficient for slice 0": "0.0",
@@ -935,15 +935,15 @@
         "Mean dice coefficient:": "0.7971978042660246"
     },
     "078": {
-        "Dice coefficient for slice 0": "0.9033485540334856",
-        "Dice coefficient for slice 1": "0.8364632237871674",
-        "Dice coefficient for slice 2": "0.852264291017075",
-        "Dice coefficient for slice 3": "0.8018867924528302",
-        "Dice coefficient for slice 4": "0.8322639780018332",
-        "Dice coefficient for slice 5": "0.7551701134089392",
-        "Dice coefficient for slice 6": "0.8238636363636364",
-        "Dice coefficient for slice 7": "0.20673076923076922",
-        "Mean dice coefficient:": "0.7514989197869671"
+        "Dice coefficient for slice 0": "0.0",
+        "Dice coefficient for slice 1": "0.0",
+        "Dice coefficient for slice 2": "0.0",
+        "Dice coefficient for slice 3": "0.0",
+        "Dice coefficient for slice 4": "0.0",
+        "Dice coefficient for slice 5": "0.0",
+        "Dice coefficient for slice 6": "0.0",
+        "Dice coefficient for slice 7": "0.0",
+        "Mean dice coefficient:": "0.0"
     },
     "079": {
         "Dice coefficient for slice 0": "0.910455764075067",
@@ -974,9 +974,9 @@
         "Dice coefficient for slice 4": "0.9413919413919414",
         "Dice coefficient for slice 5": "0.9284447072738025",
         "Dice coefficient for slice 6": "0.7881188118811882",
-        "Dice coefficient for slice 7": "0.7432432432432432",
+        "Dice coefficient for slice 7": "0.7509792949076665",
         "Dice coefficient for slice 8": "0.8818244644091223",
-        "Dice coefficient for slice 9": "0.08971553610503283",
+        "Dice coefficient for slice 9": "0.0",
         "Dice coefficient for slice 10": "0.09195402298850575",
         "Dice coefficient for slice 11": "0.0",
         "Dice coefficient for slice 12": "0.0",
@@ -984,7 +984,7 @@
         "Dice coefficient for slice 14": "0.0",
         "Dice coefficient for slice 15": "0.7942754919499105",
         "Dice coefficient for slice 16": "0.11834319526627218",
-        "Mean dice coefficient:": "0.3744485897863669"
+        "Mean dice coefficient:": "0.36962626717221336"
     },
     "082": {
         "Dice coefficient for slice 0": "0.9244911359159553",
@@ -996,14 +996,14 @@
         "Dice coefficient for slice 6": "0.9138525155065472",
         "Dice coefficient for slice 7": "0.8520499108734403",
         "Dice coefficient for slice 8": "0.8707865168539326",
-        "Dice coefficient for slice 9": "0.8878143133462283",
+        "Dice coefficient for slice 9": "0.8935762224352828",
         "Dice coefficient for slice 10": "0.8826945412311266",
         "Dice coefficient for slice 11": "0.7745839636913767",
         "Dice coefficient for slice 12": "0.7197346600331676",
         "Dice coefficient for slice 13": "0.7570093457943925",
         "Dice coefficient for slice 14": "0.8163265306122449",
         "Dice coefficient for slice 15": "0.8426395939086294",
-        "Mean dice coefficient:": "0.8577918094259032"
+        "Mean dice coefficient:": "0.8581519287439692"
     },
     "083": {
         "Dice coefficient for slice 0": "0.8090692124105012",
@@ -1021,13 +1021,13 @@
         "Dice coefficient for slice 3": "0.03548546081813701",
         "Dice coefficient for slice 4": "0.02318840579710145",
         "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.08823529411764706",
-        "Dice coefficient for slice 7": "0.032066508313539195",
+        "Dice coefficient for slice 6": "0.04311377245508982",
+        "Dice coefficient for slice 7": "0.028863499699338546",
         "Dice coefficient for slice 8": "0.02165506573859242",
         "Dice coefficient for slice 9": "0.0495603517186251",
         "Dice coefficient for slice 10": "0.0",
         "Dice coefficient for slice 11": "0.0",
-        "Mean dice coefficient:": "0.023465899318167675"
+        "Mean dice coefficient:": "0.019438855128437856"
     },
     "085": {
         "Dice coefficient for slice 0": "0.0",
@@ -1050,23 +1050,23 @@
     "086": {
         "Dice coefficient for slice 0": "0.0",
         "Dice coefficient for slice 1": "0.7236514522821577",
-        "Dice coefficient for slice 2": "0.7855297157622739",
+        "Dice coefficient for slice 2": "0.7876182287188306",
         "Dice coefficient for slice 3": "0.8662857142857143",
-        "Dice coefficient for slice 4": "0.02564102564102564",
+        "Dice coefficient for slice 4": "0.13293051359516617",
         "Dice coefficient for slice 5": "0.029850746268656716",
         "Dice coefficient for slice 6": "0.0",
-        "Mean dice coefficient:": "0.34727980774854694"
+        "Mean dice coefficient:": "0.36290523645007505"
     },
     "087": {
-        "Dice coefficient for slice 0": "0.7675675675675676",
-        "Dice coefficient for slice 1": "0.05191434133679429",
-        "Dice coefficient for slice 2": "0.0053156146179402",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.025431425976385105",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Mean dice coefficient:": "0.1062786186873359"
+        "Dice coefficient for slice 0": "0.7603883495145631",
+        "Dice coefficient for slice 1": "0.6589077887197852",
+        "Dice coefficient for slice 2": "0.754978354978355",
+        "Dice coefficient for slice 3": "0.7164480322906155",
+        "Dice coefficient for slice 4": "0.6161680458306811",
+        "Dice coefficient for slice 5": "0.5738007380073801",
+        "Dice coefficient for slice 6": "0.04219409282700422",
+        "Dice coefficient for slice 7": "0.2835820895522388",
+        "Mean dice coefficient:": "0.5508084364650778"
     },
     "088": {
         "Dice coefficient for slice 0": "0.8351648351648352",
@@ -1100,40 +1100,40 @@
         "Dice coefficient for slice 0": "0.9126506024096386",
         "Dice coefficient for slice 1": "0.9120370370370371",
         "Dice coefficient for slice 2": "0.8115942028985508",
-        "Dice coefficient for slice 3": "0.8175355450236966",
+        "Dice coefficient for slice 3": "0.8028846153846154",
         "Dice coefficient for slice 4": "0.8724035608308606",
         "Dice coefficient for slice 5": "0.5842696629213483",
         "Dice coefficient for slice 6": "0.0",
-        "Mean dice coefficient:": "0.7014986587315902"
+        "Mean dice coefficient:": "0.69940566878315"
     },
     "091": {
-        "Dice coefficient for slice 0": "0.8385345997286295",
-        "Dice coefficient for slice 1": "0.06045751633986928",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.03353057199211045",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
-        "Dice coefficient for slice 7": "0.0",
-        "Mean dice coefficient:": "0.11656533600757615"
-    },
-    "092": {
         "Dice coefficient for slice 0": "0.0",
         "Dice coefficient for slice 1": "0.0",
         "Dice coefficient for slice 2": "0.0",
         "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
+        "Dice coefficient for slice 4": "0.03373015873015873",
         "Dice coefficient for slice 5": "0.0",
         "Dice coefficient for slice 6": "0.0",
         "Dice coefficient for slice 7": "0.0",
-        "Dice coefficient for slice 8": "0.0",
-        "Dice coefficient for slice 9": "0.0",
-        "Dice coefficient for slice 10": "0.0",
+        "Mean dice coefficient:": "0.004216269841269841"
+    },
+    "092": {
+        "Dice coefficient for slice 0": "0.878334417696812",
+        "Dice coefficient for slice 1": "0.8709897610921502",
+        "Dice coefficient for slice 2": "0.7780392156862745",
+        "Dice coefficient for slice 3": "0.8016877637130801",
+        "Dice coefficient for slice 4": "0.10817307692307693",
+        "Dice coefficient for slice 5": "0.07272727272727272",
+        "Dice coefficient for slice 6": "0.011019283746556474",
+        "Dice coefficient for slice 7": "0.012698412698412698",
+        "Dice coefficient for slice 8": "0.006359300476947536",
+        "Dice coefficient for slice 9": "0.03754266211604096",
+        "Dice coefficient for slice 10": "0.017167381974248927",
         "Dice coefficient for slice 11": "0.0",
-        "Dice coefficient for slice 12": "0.0",
+        "Dice coefficient for slice 12": "0.6349206349206349",
         "Dice coefficient for slice 13": "0.0",
         "Dice coefficient for slice 14": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Mean dice coefficient:": "0.28197727891810054"
     },
     "093": {
         "Dice coefficient for slice 0": "0.0",
@@ -1149,17 +1149,17 @@
         "Mean dice coefficient:": "0.0"
     },
     "094": {
-        "Dice coefficient for slice 0": "0.31742627345844504",
-        "Dice coefficient for slice 1": "0.39438085327783556",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
-        "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.10324729392173189",
-        "Dice coefficient for slice 6": "0.05025125628140704",
-        "Dice coefficient for slice 7": "0.06611570247933884",
-        "Dice coefficient for slice 8": "0.0",
+        "Dice coefficient for slice 0": "0.32420591456736036",
+        "Dice coefficient for slice 1": "0.8106382978723404",
+        "Dice coefficient for slice 2": "0.048939641109298535",
+        "Dice coefficient for slice 3": "0.017660044150110375",
+        "Dice coefficient for slice 4": "0.878748370273794",
+        "Dice coefficient for slice 5": "0.8636363636363636",
+        "Dice coefficient for slice 6": "0.8505747126436781",
+        "Dice coefficient for slice 7": "0.8506493506493507",
+        "Dice coefficient for slice 8": "0.9125",
         "Dice coefficient for slice 9": "0.0",
-        "Mean dice coefficient:": "0.09314213794187584"
+        "Mean dice coefficient:": "0.5557552694902296"
     },
     "095": {
         "Dice coefficient for slice 0": "0.9107231920199501",
@@ -1167,16 +1167,16 @@
         "Dice coefficient for slice 2": "0.9288747346072187",
         "Dice coefficient for slice 3": "0.9018058690744921",
         "Dice coefficient for slice 4": "0.762967826657912",
-        "Dice coefficient for slice 5": "0.7201704545454546",
-        "Dice coefficient for slice 6": "0.7783467446964155",
-        "Dice coefficient for slice 7": "0.7340696686491079",
-        "Dice coefficient for slice 8": "0.8304932735426009",
-        "Dice coefficient for slice 9": "0.8217821782178217",
+        "Dice coefficient for slice 5": "0.8527918781725888",
+        "Dice coefficient for slice 6": "0.17286652078774617",
+        "Dice coefficient for slice 7": "0.0724450194049159",
+        "Dice coefficient for slice 8": "0.021148036253776436",
+        "Dice coefficient for slice 9": "0.013642564802182811",
         "Dice coefficient for slice 10": "0.8110709987966306",
         "Dice coefficient for slice 11": "0.5491525423728814",
         "Dice coefficient for slice 12": "0.16184971098265896",
         "Dice coefficient for slice 13": "0.010752688172043012",
-        "Mean dice coefficient:": "0.7002359246855878"
+        "Mean dice coefficient:": "0.5036667603834312"
     },
     "096": {
         "Dice coefficient for slice 0": "0.9188224799286352",
@@ -1240,14 +1240,14 @@
         "Mean dice coefficient:": "0.7045731600172898"
     },
     "100": {
-        "Dice coefficient for slice 0": "0.0",
-        "Dice coefficient for slice 1": "0.0",
-        "Dice coefficient for slice 2": "0.0",
-        "Dice coefficient for slice 3": "0.0",
+        "Dice coefficient for slice 0": "0.9346356123215628",
+        "Dice coefficient for slice 1": "0.002607561929595828",
+        "Dice coefficient for slice 2": "0.6016869728209935",
+        "Dice coefficient for slice 3": "0.7407407407407407",
         "Dice coefficient for slice 4": "0.0",
-        "Dice coefficient for slice 5": "0.0",
-        "Dice coefficient for slice 6": "0.0",
+        "Dice coefficient for slice 5": "0.025245441795231416",
+        "Dice coefficient for slice 6": "0.4017094017094017",
         "Dice coefficient for slice 7": "0.0",
-        "Mean dice coefficient:": "0.0"
+        "Mean dice coefficient:": "0.33832821641469074"
     }
 }

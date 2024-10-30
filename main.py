@@ -1,6 +1,13 @@
 from library import *
 
 if __name__ == '__main__':
+    """     irm = Irm('043')
+    print(irm.dtype)
+    step_1(irm, filtered=True, show=True)
+    #print(metrics(irm,show=False)) """
+
+
+    
     for k in range(1,101):
         id = str(k)
         if len(id) == 1:
@@ -15,7 +22,6 @@ if __name__ == '__main__':
 
         try:
             step_1(irm, filtered=True, show=False)
-            metrics(irm,show=False)
+            metrics(irm,show=False, write=True)
         except ValueError as e:
-            metrics(irm, e,show=False) 
-
+            metrics(irm, e,show=False, write=True) 
