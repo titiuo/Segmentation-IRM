@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
 
     
-    for k in range(1,101):
+    for k in range(80,82):
         id = str(k)
         if len(id) == 1:
             id = '00'+id

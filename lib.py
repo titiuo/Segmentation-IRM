@@ -1,7 +1,7 @@
 from library import *
 import cv2
 
-irm = Irm('035')
+irm = Irm('085')
 irm.show_slices(0)
 
 working_set = irm.abs_diff.astype('uint8')
@@ -18,7 +18,7 @@ elif 10 <= std < 26:
 else:
     lowThresh = 15*std
 high_thresh = 1.5*lowThresh
-edges = cv2.Canny(working_set, lowThresh, high_thresh)
+edges = cv2.Canny(working_set, 150, 200)
 #working_set = edges
 
 hough_transform = hough(edges)

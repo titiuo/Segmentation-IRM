@@ -269,7 +269,7 @@ def step_1(irm,show=False,filtered=False):
     elif 10 <= std < 26:
         lowThresh = 20*std
     else:
-        lowThresh = 15*std
+        lowThresh = 15*std 
     edges = cv2.Canny(working_set, lowThresh, 1.5*lowThresh)
     kernel = np.ones((5,5), np.uint8)
 
@@ -560,7 +560,7 @@ def metrics(irm, e=None,show = False,write=True):
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
             data = {}
-
+        tmp_data["Group"]= irm.info["Group"]
         # Ajouter les nouvelles données
         data[str(id)] = tmp_data
 
