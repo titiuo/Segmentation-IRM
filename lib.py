@@ -1,8 +1,26 @@
 from library import *
 import cv2
 
-irm = Irm('085')
+irm = Irm('038')
 irm.show_slices(0)
+first_slice = irm.data[0,:,:,irm.middle_slice]
+std = np.std(first_slice)
+mean = np.mean(first_slice)
+print('Mean: ', mean)
+print('Std: ', std)
+if std < 10:
+    lowThresh = 15*std
+elif 10 <= std < 26:
+    lowThresh = 20*std
+else:
+    lowThresh = 15*std
+high_thresh = 1.5*lowThresh
+edges = cv2.Canny(first_slice.astype('uint8'), 180, 400)
+u,v = hough(edges)
+plt.imshow(edges, cmap='gray')
+plt.scatter(v,u, color='red')
+plt.show()
+
 
 working_set = irm.abs_diff.astype('uint8')
 high_thresh, thresh_im = cv2.threshold(working_set, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -18,18 +36,23 @@ elif 10 <= std < 26:
 else:
     lowThresh = 15*std
 high_thresh = 1.5*lowThresh
-edges = cv2.Canny(working_set, 150, 200)
+
+edges = cv2.Canny(working_set, lowThresh, high_thresh)
 #working_set = edges
 
-hough_transform = hough(edges)
 
-print(hough_transform)
+y,x = hough(edges)
+
+
+
+plt.figure(1)
+plt.imshow(working_set, cmap='gray')
+plt.scatter(x,y, color='red')
+
 
 plt.figure(2)
-plt.imshow(working_set, cmap='gray')
-plt.scatter(hough_transform[1], hough_transform[0])
-plt.figure(3)
-plt.scatter(hough_transform[1], hough_transform[0])
+plt.scatter(x, y, color='red')
+plt.scatter(v,u, color='blue')
 plt.imshow(edges, cmap='gray')
 plt.show()
 

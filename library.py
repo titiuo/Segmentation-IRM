@@ -6,6 +6,7 @@ import cv2
 import torchio as tio
 from collections import deque
 import json
+import skimage.morphology as mp
 
 
 
@@ -18,7 +19,7 @@ class Irm():
         self.data = self.image.data.numpy()
         self.info = patient_info(patient_id)
         self.seed_points = {}
-        self.midde_slice = self.data.shape[-1]//2
+        self.middle_slice = self.data.shape[-1]//2
         self.t_ED=patient_info(self.patient_id)["ED"]-1
         self.t_ES=patient_info(self.patient_id)["ES"]-1
         self.images_processed = []
@@ -30,7 +31,7 @@ class Irm():
         self.set_of_times = {} #key: layer index, value: array of times
         for k in range(self.data.shape[3]):
             self.set_of_times[k] = np.array([self.data[i,:,:,k] for i in range(self.data.shape[0])])
-        self.abs_diff = absolute_difference_Ed_ES(patient_id, self.midde_slice)
+        self.abs_diff = absolute_difference_Ed_ES(patient_id, self.middle_slice)
         self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
         #self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
         self.mean_dice = None
@@ -258,7 +259,7 @@ def step_1(irm,show=False,filtered=False):
     
     temporary_dictionnary = {} #used to store slicez in the right order
     data = irm.data
-    middle_slice_index = irm.midde_slice
+    middle_slice_index = irm.middle_slice
     
     working_set = irm.abs_diff.astype('uint8')
 
@@ -305,11 +306,11 @@ def step_1(irm,show=False,filtered=False):
 
         temporary_dictionnary[(current_time,current_slice)] = image_segmented
     
-        if (current_time, current_slice) in irm.seed_points:
+        """ if (current_time, current_slice) in irm.seed_points:
             mean = np.mean([data[current_time,x,y,current_slice] for x,y in region])
             std=np.std([data[current_time,x,y,current_slice] for x,y in region])
             #print(mean)
-            continue
+            continue """
 
         #min_energy_pixel = get_next_seed()
         min_energy_pixel = barycentre(irm,current_time, current_slice, region)
@@ -402,7 +403,7 @@ def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
     print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
-def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_neighbours=8):
+def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_neighbours=8):
     s = 0.56
     """ if filtered:
         working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
@@ -411,7 +412,18 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
     # Convert the image to 32-bit float format
     if filtered:
         image_32f = irm.data[t,:,:,z].astype(np.float32)
-        working_set = cv2.bilateralFilter(image_32f, 9, 75, 75)
+        working_set = cv2.bilateralFilter(image_32f, 15, 50, 60)
+
+        """ fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+        axs[0].imshow(image_32f, cmap='gray')
+        axs[0].set_title('Original Image')
+        axs[0].axis('off')
+
+        axs[1].imshow(working_set, cmap='gray')
+        axs[1].set_title('Bilateral Filtered Image')
+        axs[1].axis('off')
+        plt.show() """
+
     else:
         working_set = irm.data[t,:,:,z]
     #print(f"shape of working_set : {working_set.shape}")
@@ -446,7 +458,11 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
             else:
                 continue 
             explored.append(couple)
-    region = dilate(region)
+    mask = [[0,1,0],[1,1,1],[0,1,0]]
+    #mask = mp.disk(1)
+    region = close(working_set,region,np.ones((8,8)))
+    region = dilate(working_set,region,mask)
+    #region = dilate(region)
     """ print(np.min(image_processed), np.max(image_processed)) """
     if image_processed.dtype == 'float32':
         image_processed = 255 * (image_processed - np.min(image_processed)) / (np.max(image_processed) - np.min(image_processed))
@@ -465,7 +481,7 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=15, filtered=False, nb_nei
 def barycentre(irm, t, z, region):
     A = np.zeros((irm.data.shape[1], irm.data.shape[2]))
     
-    if not region:
+    if len(region)==0:
         raise ValueError("Region is empty, cannot compute barycentre.")
     
     for couple in region:
@@ -505,7 +521,7 @@ def binary(image):
 def dice_coefficient(image1,image2,show=False):
     image2 = image2 > 2.
     intersection = np.logical_and(image1,image2)
-    diff = np.abs(image1-intersection)
+    diff = image1-image2
     if show:
         fig, axs = plt.subplots(1,4 , figsize=(15, 5))
         axs[0].imshow(image1, cmap='gray')
@@ -555,7 +571,7 @@ def metrics(irm, e=None,show = False,write=True):
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     if write:
         try:
-            with open('test_logs.json', "r") as file:
+            with open('bin.json', "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
@@ -565,20 +581,85 @@ def metrics(irm, e=None,show = False,write=True):
         data[str(id)] = tmp_data
 
         # Réécrire le fichier JSON avec les nouvelles données
-        with open('test_logs.json', "w") as file:
+        with open('bin.json', "w") as file:
             json.dump(data, file, indent=4)
     return mean
     
+
+
+def dilate(img, region, mask):
+    mask = np.array(mask)  # S'assurer que le masque est un tableau numpy
+    mask_shape = mask.shape
+    shape = img.shape
+    copy = np.zeros(shape, dtype=np.int32)
+    
+    # Marquer les points de la région initiale dans 'copy'
+    for x, y in region:
+        copy[x, y] = 1
+    # Calcul de l'offset en fonction de la taille du masque
+    offset_x = mask_shape[0] // 2
+    offset_y = mask_shape[1] // 2
+
+    # Appliquer le masque de dilatation
+    for x, y in region:
+        for i in range(mask_shape[0]):
+            for j in range(mask_shape[1]):
+                if mask[i, j] == 1:  # Vérifier la position du masque
+                    nx, ny = x + i - offset_x, y + j - offset_y
+                    # Vérifier les limites de l'image
+                    if 0 <= nx < shape[0] and 0 <= ny < shape[1]:
+                        # Ajouter les points dilatés à 'new_region' si non déjà présents
+                        if copy[nx, ny] == 0:
+                            copy[nx, ny] = 1  # Marquer dans 'copy' pour éviter de repasser dessus
+    new_region = np.argwhere(copy == 1).tolist()
+    return new_region   
+
+def erode(img, region, mask):
+    mask = np.array(mask)  # S'assurer que le masque est un tableau numpy
+    mask_shape = mask.shape
+    shape = img.shape
+    copy = np.zeros(shape, dtype=np.int32)
+    new_region = set()  # Nouvel ensemble pour stocker la région érodée
+    
+    # Marquer les points de la région initiale dans 'copy'
+    for x, y in region:
+        copy[x, y] = 1
+
+    # Calcul de l'offset pour centrer le masque autour de chaque point
+    offset_x = mask_shape[0] // 2
+    offset_y = mask_shape[1] // 2
+
+    # Appliquer le masque d'érosion
+    for x, y in region:
+        erode_point = True  # On assume que le point peut rester dans la région érodée
+        for i in range(mask_shape[0]):
+            for j in range(mask_shape[1]):
+                if mask[i, j] == 1:  # Position du masque à vérifier
+                    nx, ny = x + i - offset_x, y + j - offset_y
+                    # Si un voisin hors de la région est trouvé, on enlève le point
+                    if not (0 <= nx < shape[0] and 0 <= ny < shape[1] and copy[nx, ny] == 1):
+                        erode_point = False
+                        break
+            if not erode_point:
+                break
+        # Si tous les voisins dans le masque sont dans la région, on garde le point
+        if erode_point:
+            new_region.add((x, y))
+    
+    return new_region
+
+def close(img, region, mask):
+    return erode(img, dilate(img, region, mask), mask)
+
     
 
-def dilate(region):
-    tmp = region.copy()
+    """ tmp = region.copy()
     for pixel in tmp:
         x,y = pixel
-        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+        for couple in [(x+1,y),(x-1,y),(x,y+1),(x,y-1),(x+1,y+1),(x-1,y+1),(x-1,y-1),(x+1,y-1)]:
             if couple not in tmp:
                 region.append(couple)
-    return region
+    return region """
    
 
 """ irm=Irm("100")
@@ -608,12 +689,7 @@ def get_window(image,w=75):
 
 radius=15
 thickness=1
-def hough(closed_image,w=75,thickness=1):
-    """ closed_image,(x_bary,y_bary) = get_window(closed_image,w)
-    grad_x = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 1, 0, ksize=5)
-    grad_y = cv2.Sobel(closed_image.astype(np.uint8), cv2.CV_64F, 0, 1, ksize=5)
-    grad_magnitude = cv2.magnitude(grad_x, grad_y)
-    closed_image = grad_magnitude >35 """
+def hough(closed_image,barycentre=None,thickness=1):
     shape = closed_image.shape
     ima_intens=np.zeros((15,shape[0],shape[1]))
     for r in range(10,25):
@@ -624,10 +700,8 @@ def hough(closed_image,w=75,thickness=1):
                     cv2.circle(mask,(b,a),r,255,thickness)
                     ima_intens[r-10][mask==255]+=1 
 
-    r,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape) #+np.array([x_bary-w,y_bary-w])
-    #print(r,x,y)
-    #plt.figure(1)
-    #plt.imshow(ima_intens[r-10])
+    r,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape)
+
     return x,y
     
 """ point = hough(closed_image.astype(bool),w=30)
