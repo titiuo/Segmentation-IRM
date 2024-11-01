@@ -1,8 +1,8 @@
 from library import *
 import multiprocessing
 
-def run(start):
-    for k in range(start, start + 10):
+def run(start,r=1):
+    for k in range(start, start + r):
         id = str(k)
         if len(id) == 1:
             id = '00' + id
@@ -22,16 +22,14 @@ def run(start):
 
 
 if __name__ == '__main__':
-    irm = Irm('001')
-    step_1(irm, filtered=True, show=True)
-    """ processes = []
-    for i in range(10):
-        p = multiprocessing.Process(target=run, args=(i * 10 + 1,))
+    processes = []
+    for i in range(100):
+        p = multiprocessing.Process(target=run, args=(i + 1,))
         processes.append(p)
         p.start()
 
     for p in processes:
-        p.join()  """
+        p.join()
     
 
 

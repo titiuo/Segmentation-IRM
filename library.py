@@ -17,6 +17,7 @@ class Irm():
         self.patient_id = patient_id
         self.image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
         self.data = self.image.data.numpy()
+        self.shape = self.data.shape
         self.info = patient_info(patient_id)
         self.seed_points = {}
         self.middle_slice = self.data.shape[-1]//2
@@ -294,7 +295,7 @@ def step_1(irm,show=False,filtered=False):
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     while to_process:
         current_time, current_slice = to_process.pop(0)
-        print(f"Processing time {current_time}, slice {current_slice}.")
+        print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
         image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered, nb_neighbours=4)
 
 
@@ -462,6 +463,29 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_nei
     #mask = mp.disk(1)
     region = close(working_set,region,np.ones((8,8)))
     region = dilate(working_set,region,mask)
+
+    region = np.array(region)
+    
+    contour = region.reshape((-1,1,2))
+
+    hull = cv2.convexHull(contour)
+
+    image = np.zeros((irm.shape[1], irm.shape[2], 3), dtype=np.uint8)  # Remplacez les dimensions par celles de votre image
+
+    cv2.drawContours(image, [hull], -1, (255, 255, 255), thickness=-1)
+
+    # Dessiner l'enveloppe convexe sur l'image
+    cv2.drawContours(image, [hull], -1, (255), thickness=-1)
+    
+    np.column_stack(np.where(image > 0))
+    
+    new_region = np.column_stack(np.where(image > 0))
+
+
+    region = np.array([(y, x) for x, y,z in new_region.tolist()])
+    
+    
+
     #region = dilate(region)
     """ print(np.min(image_processed), np.max(image_processed)) """
     if image_processed.dtype == 'float32':
@@ -486,7 +510,7 @@ def barycentre(irm, t, z, region):
     
     for couple in region:
         try:
-            x, y = couple
+            y, x = couple[1], couple[0]
             A[x, y] = 1
         except:
             pass
