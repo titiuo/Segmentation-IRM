@@ -1,9 +1,9 @@
 from library import *
 import cv2
 
-irm = Irm('038')
+irm = Irm('035')
 irm.show_slices(0)
-first_slice = irm.data[0,:,:,irm.middle_slice]
+first_slice = irm.data[0,:,:,0]
 std = np.std(first_slice)
 mean = np.mean(first_slice)
 print('Mean: ', mean)
@@ -15,7 +15,7 @@ elif 10 <= std < 26:
 else:
     lowThresh = 15*std
 high_thresh = 1.5*lowThresh
-edges = cv2.Canny(first_slice.astype('uint8'), 180, 400)
+edges = cv2.Canny(first_slice.astype('uint8'), 180, 300)
 u,v = hough(edges)
 plt.imshow(edges, cmap='gray')
 plt.scatter(v,u, color='red')
@@ -37,11 +37,14 @@ else:
     lowThresh = 15*std
 high_thresh = 1.5*lowThresh
 
-edges = cv2.Canny(working_set, lowThresh, high_thresh)
+edges = cv2.Canny(working_set, lowThresh/2, high_thresh/2)
 #working_set = edges
 
 
 y,x = hough(edges)
+
+w = (x+v)/2
+z = (y+u)/2
 
 
 
@@ -53,6 +56,7 @@ plt.scatter(x,y, color='red')
 plt.figure(2)
 plt.scatter(x, y, color='red')
 plt.scatter(v,u, color='blue')
+plt.scatter(w,z, color='green')
 plt.imshow(edges, cmap='gray')
 plt.show()
 

@@ -8,6 +8,10 @@ from collections import deque
 import json
 import skimage.morphology as mp
 
+#supprime les warning
+import SimpleITK as sitk
+
+sitk.ProcessObject_SetGlobalWarningDisplay(False)
 
 
 ####################        CLASS DEFINITION       ####################
@@ -19,6 +23,7 @@ class Irm():
         self.data = self.image.data.numpy()
         self.shape = self.data.shape
         self.info = patient_info(patient_id)
+        self.disease = self.info["Group"]
         self.seed_points = {}
         self.middle_slice = self.data.shape[-1]//2
         self.t_ED=patient_info(self.patient_id)["ED"]-1
@@ -258,27 +263,32 @@ def step_1(irm,show=False,filtered=False):
         return min_energy_pixel
     
     
-    temporary_dictionnary = {} #used to store slicez in the right order
+    temporary_dictionnary = {} #used to store slices in the right order
     data = irm.data
     middle_slice_index = irm.middle_slice
+
+    if irm.disease == "RV":
+        initial_seed_point = [get_rv(irm)]
     
-    working_set = irm.abs_diff.astype('uint8')
-
-    #testing formulas with std	
-    std = np.std(working_set)
-    if std < 10:
-        lowThresh = 15*std
-    elif 10 <= std < 26:
-        lowThresh = 20*std
     else:
-        lowThresh = 15*std 
-    edges = cv2.Canny(working_set, lowThresh, 1.5*lowThresh)
-    kernel = np.ones((5,5), np.uint8)
+    
+        working_set = irm.abs_diff.astype('uint8')
 
-    # Application de la fermeture (dilatation suivie d'une érosion)
-    #closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
-    initial_seed_point = [hough(edges)]
-    #initial_seed_point = [(97,122)]
+        #testing formulas with std	
+        std = np.std(working_set)
+        if std < 10:
+            lowThresh = 15*std
+        elif 10 <= std < 26:
+            lowThresh = 20*std
+        else:
+            lowThresh = 15*std 
+        edges = cv2.Canny(working_set, lowThresh, 1.5*lowThresh)
+        kernel = np.ones((5,5), np.uint8)
+
+        # Application de la fermeture (dilatation suivie d'une érosion)
+        #closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
+        initial_seed_point = [hough(edges)]
+        #initial_seed_point = [(97,122)]
     if len(initial_seed_point) > 1:
         raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
         
@@ -727,15 +737,97 @@ def hough(closed_image,barycentre=None,thickness=1):
     r,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape)
 
     return x,y
+
+def new_hough(irm,barycentre=None,thickness=1,show = False):
+    N = irm.data.shape[-1]
+    values = []
+    for slices in range(N):
+        abs = np.abs(irm.data[irm.t_ED,:,:,slices]-irm.data[irm.t_ES,:,:,slices]).astype('uint8')
+        abs = cv2.bilateralFilter(abs, 3, 75, 200)
+        working_set = abs.astype('uint8')
+        std = np.std(working_set)
+        if std < 10:
+            lowThresh = 15*std
+        elif 10 <= std < 26:
+            lowThresh = 20*std
+        else:
+            lowThresh = 15*std
+        edges = cv2.Canny(working_set, lowThresh/1.5, 2*lowThresh)
+        nb_non_zero = np.count_nonzero(edges)
+        if nb_non_zero < 250:
+            #print(f"Slice {slices} has {nb_non_zero}pxs.")
+            lowThresh = lowThresh/2
+            edges = cv2.Canny(working_set, lowThresh, lowThresh*3)
+            nb_non_zero = np.count_nonzero(edges)
+        """ while nb_non_zero > 2800:
+            #print(f"Slice {slices} has {nb_non_zero}pxs.")
+            lowThresh = lowThresh*1.5
+            edges = cv2.Canny(working_set, lowThresh, lowThresh*2)
+            nb_non_zero = np.count_nonzero(edges) """
+        x,y = hough(edges)
+        values.append((x,y))
+        """ if show:
+            plt.figure()
+            plt.scatter(y,x, color='red')
+            plt.imshow(working_set,cmap='gray')
+            plt.title(f"{nb_non_zero} pixels in slice {slices}")
+            plt.figure()
+            plt.scatter(y,x, color='red')
+            plt.imshow(edges, cmap='gray')
+            plt.show() """
+    return values
+
+
+
+def get_rv(irm):
+    first_slice = irm.data[0,:,:,0]
+    working_set = irm.abs_diff.astype('uint8')
+
+    std = np.std(working_set)
+    mean = np.mean(working_set)
+    """ print('Mean: ', mean)
+    print('Std: ', std) """
+    if std < 10:
+        lowThresh = 15*std
+    elif 10 <= std < 26:
+        lowThresh = 20*std
+    else:
+        lowThresh = 15*std
+    high_thresh = 1.5*lowThresh
+
+    edges = cv2.Canny(working_set, lowThresh/2, high_thresh/2)
+
+    y,x = hough(edges)
+
+    total_mass = np.sum(working_set)
+    if total_mass != 0:
+        indices = np.indices(working_set.shape)
+        cX = int(np.sum(indices[1] * working_set) / total_mass)
+        cY = int(np.sum(indices[0] * working_set) / total_mass)
+    else:
+        cX, cY = 0, 0
+
+    print("Barycentre: (", cX, ",", cY, ")")
+
+    first_slice = first_slice[cY-50:cY+50, cX-50:cX+50]
+    std = np.std(first_slice)
+    mean = np.mean(first_slice)
+    """ print('Mean: ', mean)
+    print('Std: ', std) """
+    lowThresh = 7*std
+    high_thresh = 1.5*lowThresh
+    edge = cv2.Canny(first_slice.astype('uint8'), 180, 300)
+    u,v = hough(edge)
+
+    """ plt.figure(1)
+    plt.imshow(first_slice, cmap='gray')
+    plt.figure(2)
+    plt.imshow(edge, cmap='gray')
+    plt.scatter(v,u, color='red') """
+
+    u = u + cY-50
+    v = v + cX-50
+    w = int((x+v)/2)
+    z = int((y+u)/2)
+    return z,w
     
-""" point = hough(closed_image.astype(bool),w=30)
-
-
-
-print(point)
-
-plt.figure(1)
-plt.imshow(closed_image) 
-plt.figure(2)
-plt.imshow(working_set)
-plt.show() """
