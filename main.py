@@ -28,8 +28,27 @@ def run(start,r=5):
 
 
 if __name__ == '__main__':
-    irm = Irm('088')
-    print(irm.gt1.shape)
+    """ for id in Dcm_patients:
+        irm=Irm(id)
+        step_1(irm, filtered=True, show=False)
+        metrics(irm, show=False, write=True)
+    for id in Hcm_patients:
+        irm=Irm(id)
+        step_1(irm, filtered=True, show=False)
+        metrics(irm, show=False, write=True)
+    for id in Minf_patients:
+        irm=Irm(id)
+        step_1(irm, filtered=True, show=False)
+        metrics(irm, show=False, write=True)
+    for id in Nor_patients:
+        irm=Irm(id)
+        step_1(irm, filtered=True, show=False)
+        metrics(irm, show=False, write=True)
+    for id in Rv_patients:
+        irm=Irm(id) """
+    irm=Irm('038')
+    step_1(irm, filtered=True, show=True)
+    metrics(irm, show=True, write=False)
     """ for id in Rv_patients:
         irm = Irm(id)
         print("\n\n ---------------------------------------- \n\n")

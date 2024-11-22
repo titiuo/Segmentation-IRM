@@ -74,9 +74,10 @@ def main(irm,show='False'):
         return True
     
 if __name__ == '__main__':
-    """ irm = Irm("052")
-    main(irm,show='True')  """
-    count = 0
+    irm = Irm("057")
+    main(irm,show='True') 
+
+    """ count = 0
     for id in Dcm_patients:
         irm = Irm(id)
         flag = main(irm,show=False)
@@ -112,7 +113,7 @@ if __name__ == '__main__':
             count += 1
             if count > 10:
                 break 
-    print(f"{count} images not in rv.") 
+    print(f"{count} images not in rv.") """ 
  
     
 
