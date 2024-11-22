@@ -20,6 +20,7 @@ sorted_pairs = sorted(zip(Dcm_x, Dcm_y))  # Trie selon Dcm_x
 Dcm_x_sorted, Dcm_y_sorted = zip(*sorted(zip(Dcm_x, Dcm_y)))
 Dcm_x_sorted_float = [float(x) for x in Dcm_x_sorted]
 rounded_x = np.round(Dcm_x_sorted_float, 2)
+plt.figure(1)
 plt.plot(Dcm_x_sorted_float, Dcm_y_sorted, marker='o')
 plt.xticks(Dcm_x_sorted_float, labels=rounded_x, rotation=45)
 plt.xlabel("Dcm_x (arrondi à 2 décimales)")
@@ -91,6 +92,18 @@ plt.ylabel("Rv_y")
 plt.title("Graphique avec Rv_x arrondi")
 plt.grid(True)
 
+all_x = Dcm_x + Hcm_x + Minf_x + Nor_x + Rv_x
+all_y = Dcm_y + Hcm_y + Minf_y + Nor_y + Rv_y
+sorted_pairs = sorted(zip(all_x, all_y))
+all_x_sorted, all_y_sorted = zip(*sorted(zip(all_x, all_y)))
+all_x_sorted_float = [float(x) for x in all_x_sorted]
+rounded_x = np.round(all_x_sorted_float, 2)
+plt.figure(2)
+plt.plot(all_x_sorted, all_y_sorted, marker='o')
+plt.xticks(all_x_sorted_float, labels=rounded_x, rotation=45)
 
-
-plt.show()
+print(all_x_sorted_float)
+dico={"x":all_x_sorted_float, "y":all_y_sorted}
+with open("rayons_opti.json", "w") as f:
+    json.dump(dico, f)
+#plt.show()

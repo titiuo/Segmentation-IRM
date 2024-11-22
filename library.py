@@ -265,7 +265,7 @@ def step_1(irm,show=False,filtered=False):
     
     temporary_dictionnary = {} #used to store slices in the right order
     data = irm.data
-    middle_slice_index = irm.middle_slice
+    """ middle_slice_index = irm.middle_slice
 
     if irm.disease == "RV":
         initial_seed_point = [get_rv(irm)]
@@ -297,6 +297,20 @@ def step_1(irm,show=False,filtered=False):
     t_ES = irm.t_ES
     irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     w=11
+    center_y,center_x=irm.seed_points[(t_ED,middle_slice_index)] """
+    middle_slice_index = irm.middle_slice
+
+    values = new_hough(irm,show=True)
+    x = np.median([val[0] for val in values])
+    y = np.median([val[1] for val in values])
+    initial_seed_point = [(int(x),int(y))]
+    if len(initial_seed_point) > 1:
+        raise ValueError(f"Plusieurs cercles detectes : {len(initial_seed_point)}")
+        
+
+    t_ED = irm.t_ED
+    t_ES = irm.t_ES
+    irm.seed_points={(t_ED,middle_slice_index):initial_seed_point[0],(t_ES,middle_slice_index):initial_seed_point[0]}
     center_y,center_x=irm.seed_points[(t_ED,middle_slice_index)]
     print(f"Initial seed point: {center_x,center_y} for slice: {middle_slice_index}.")
     
@@ -306,7 +320,7 @@ def step_1(irm,show=False,filtered=False):
     while to_process:
         current_time, current_slice = to_process.pop(0)
         print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
-        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,filtered=filtered, nb_neighbours=4)
+        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,threshold=30,filtered=filtered, nb_neighbours=4)
 
 
         image_segmented[center_y,center_x] = [0,0,255]
@@ -721,27 +735,76 @@ def get_window(image,w=75):
 
 
 
-radius=15
-thickness=1
-def hough(closed_image,barycentre=None,thickness=1):
+def find_indices_within_range(lst, percent, epsilon):
+    """
+    Trouve les indices min et max d'une liste pour les valeurs entre percent-epsilon et percent+epsilon.
+    
+    :param lst: Liste de valeurs (liste ou tableau numpy).
+    :param percent: Valeur centrale.
+    :param epsilon: Tolérance autour de percent.
+    :return: Indices minimum et maximum des éléments satisfaisant la condition, ou (None, None) si aucun trouvé.
+    """
+    # Définir la plage de recherche
+    lower_bound = percent - epsilon
+    upper_bound = percent + epsilon
+    
+    # Trouver les indices des éléments satisfaisant la condition
+    indices = [i for i, value in enumerate(lst) if lower_bound <= value <= upper_bound]
+    
+    if indices:
+        return min(indices), max(indices)
+    else:
+        return None, None  # Aucun élément trouvé dans la plage
+    
+def hough(closed_image,rayons_test,barycentre=None,thickness=1):
     shape = closed_image.shape
-    ima_intens=np.zeros((15,shape[0],shape[1]))
-    for r in range(10,25):
+    ima_intens=np.zeros((len(rayons_test),shape[0],shape[1]))
+    i=0
+    print(rayons_test)
+    for r in rayons_test:
         for a in range(closed_image.shape[0]):
             for b in range(closed_image.shape[1]):
                 if closed_image[a,b]==255:
                     mask=np.zeros(closed_image.shape)
                     cv2.circle(mask,(b,a),r,255,thickness)
-                    ima_intens[r-10][mask==255]+=1 
+                    ima_intens[i][mask==255]+=1 
+        i+=1
 
-    r,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape)
-
+    r_ind,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape)
+    print(f"Le rayon trouvé est :{rayons_test[r_ind]}")
     return x,y
 
 def new_hough(irm,barycentre=None,thickness=1,show = False):
     N = irm.data.shape[-1]
     values = []
+    epsilon=0.1
+    try:
+        with open('rayons_opti.json', "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        pass
     for slices in range(N):
+        percent=slices/N
+        data_percents=data["x"]
+        data_rayons=data["y"]
+        ind_min,ind_max=find_indices_within_range(data_percents,percent,epsilon)
+        rayons_utiles=data_rayons[ind_min:ind_max]
+        r_min=min(rayons_utiles)
+        r_max=max(rayons_utiles)+10
+        r_mean=np.mean(rayons_utiles)
+        variance=np.std(rayons_utiles)
+        # Étape 1 : Générer des rayons autour de r_mean avec des pas fins
+        step_fine = 1  # Pas fin
+        fine_range = range(max(r_min, int(r_mean - 2 * np.sqrt(variance))), 
+                        min(r_max, int(r_mean + 2 * np.sqrt(variance))) + 1, step_fine)
+
+        # Étape 2 : Ajouter des rayons dans les zones éloignées avec des pas plus larges
+        step_coarse = 3  # Pas large
+        coarse_range = range(r_min, r_max + 1, step_coarse)
+
+        # Combiner les deux ensembles de rayons
+        rayons_test = sorted(set(fine_range).union(coarse_range))
+
         abs = np.abs(irm.data[irm.t_ED,:,:,slices]-irm.data[irm.t_ES,:,:,slices]).astype('uint8')
         abs = cv2.bilateralFilter(abs, 3, 75, 200)
         working_set = abs.astype('uint8')
@@ -764,9 +827,9 @@ def new_hough(irm,barycentre=None,thickness=1,show = False):
             lowThresh = lowThresh*1.5
             edges = cv2.Canny(working_set, lowThresh, lowThresh*2)
             nb_non_zero = np.count_nonzero(edges) """
-        x,y = hough(edges)
+        x,y = hough(edges,rayons_test)
         values.append((x,y))
-        """ if show:
+        if show:
             plt.figure()
             plt.scatter(y,x, color='red')
             plt.imshow(working_set,cmap='gray')
@@ -774,7 +837,7 @@ def new_hough(irm,barycentre=None,thickness=1,show = False):
             plt.figure()
             plt.scatter(y,x, color='red')
             plt.imshow(edges, cmap='gray')
-            plt.show() """
+            plt.show()
     return values
 
 
