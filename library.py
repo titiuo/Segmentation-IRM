@@ -7,6 +7,7 @@ import torchio as tio
 from collections import deque
 import json
 import skimage.morphology as mp
+import matplotlib.patches as patches
 
 #supprime les warning
 import SimpleITK as sitk
@@ -332,14 +333,16 @@ def step_1(irm,show=False,filtered=False):
     #irm.images_processed.append(tmp)
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     memo = [(t_ED,middle_slice_index)]
+    threshold = 30
     while to_process:
         #print(to_process)
         current_time, current_slice = to_process.pop(0)
         memo.append((current_time,current_slice))
         center_x,center_y = irm.seed_points[(current_time,current_slice)]
         #print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
-        image_segmented,region = region_growing_adaptive(irm,current_time,center_x,center_y,current_slice,threshold=30,filtered=filtered, nb_neighbours=4)
-
+        image_segmented,region,threshold_ = region_growing_adaptive(irm,current_time,center_x,center_y,current_slice,threshold=threshold,filtered=filtered, nb_neighbours=4)
+        if current_slice == middle_slice_index:
+            threshold = threshold_+5
 
         image_segmented[center_x,center_y] = [0,0,255]
     
@@ -457,7 +460,7 @@ def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
     print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
-def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=False, nb_neighbours=8):
+def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=3,threshold=3, filtered=False, nb_neighbours=8):
     # Convert the image to 32-bit float format
     if filtered:
         image_32f = irm.data[t,:,:,z].astype(np.float32)
@@ -467,6 +470,39 @@ def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=F
         working_set = irm.data[t,:,:,z]
     #print(f"shape of working_set : {working_set.shape}")
     initial_x,initial_y = x,y
+    """
+    window_size = 7
+    radius = window_size // 2
+
+    # Déterminer les limites de la fenêtre
+    x_min = max(0, x - radius)
+    x_max = min(image_32f.shape[0], x + radius + 1)
+    y_min = max(0, y - radius)
+    y_max = min(image_32f.shape[1], y + radius + 1)
+    if True:
+        # Visualiser l'image et la fenêtre
+        fig, ax = plt.subplots()
+        ax.imshow(image_32f, cmap='gray')
+
+        # Ajouter un rectangle pour la fenêtre
+        rect = patches.Rectangle((y_min, x_min), window_size, window_size, 
+                                linewidth=2, edgecolor='red', facecolor='none')
+        ax.add_patch(rect)
+
+        # Ajouter un point pour le centre
+        ax.plot(initial_y, initial_x, 'bo', label="Centre de la fenêtre")
+
+        # Titre et légende
+        plt.title("Visualisation de l'image avec la fenêtre 7x7")
+        plt.legend()
+        plt.show()
+    # Extraire la sous-région de l'image
+    window = working_set[x_min:x_max, y_min:y_max]
+    
+    # Calculer la variance des pixels dans la fenêtre
+    variance = np.var(window)
+    mean=np.mean(window)
+    print(f"Variance: {variance}, Mean: {mean}") """
     to_explore = [(x,y)]
     explored = []
     edge= []
@@ -533,8 +569,7 @@ def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=F
             image_rgb[couple[0],couple[1]] = [0,128,0]
         except:
             pass
-    print(f"This is the threshold: {threshold} for slice {z}.")
-    return image_rgb,region 
+    return image_rgb,region,threshold
 
 
 
@@ -581,6 +616,11 @@ def binary(image):
 
 def dice_coefficient(image1,image2,show=False):
     image2 = image2 > 2.
+    white_pixels_image1 = np.sum(image1)
+    white_pixels_image2 = np.sum(image2)
+    if white_pixels_image1 < 15 and white_pixels_image2 == 0:
+        print("No segmentation detected.")
+        return 1
     intersection = np.logical_and(image1,image2)
     diff = image1-image2
     if show:
@@ -632,7 +672,7 @@ def metrics(irm, e=None,show = False,write=True):
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     if write:
         try:
-            with open('bin.json', "r") as file:
+            with open('logs.json', "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
@@ -642,7 +682,7 @@ def metrics(irm, e=None,show = False,write=True):
         data[str(id)] = tmp_data
 
         # Réécrire le fichier JSON avec les nouvelles données
-        with open('bin.json', "w") as file:
+        with open('logs.json', "w") as file:
             json.dump(data, file, indent=4)
     print(f"Mean dice coefficient for patient {id}: {mean}")
     return mean
