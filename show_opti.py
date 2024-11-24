@@ -106,4 +106,4 @@ print(all_x_sorted_float)
 dico={"x":all_x_sorted_float, "y":all_y_sorted}
 with open("rayons_opti.json", "w") as f:
     json.dump(dico, f)
-#plt.show()
+plt.show()

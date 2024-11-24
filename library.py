@@ -13,13 +13,24 @@ import SimpleITK as sitk
 
 sitk.ProcessObject_SetGlobalWarningDisplay(False)
 
+#import of data on radius
+
+try:
+    with open('rayons_opti.json', "r") as file:
+        radius_data = json.load(file)
+except FileNotFoundError:
+    pass
+
 
 ####################        CLASS DEFINITION       ####################
 
 class Irm():
     def __init__(self,patient_id):
         self.patient_id = patient_id
-        self.image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
+        try:
+            self.image = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_4d.nii.gz")
+        except:
+            self.image = tio.ScalarImage(f"../database/testing/patient{patient_id}/patient{patient_id}_4d.nii.gz")
         self.data = self.image.data.numpy()
         self.shape = self.data.shape
         self.info = patient_info(patient_id)
@@ -38,7 +49,10 @@ class Irm():
         for k in range(self.data.shape[3]):
             self.set_of_times[k] = np.array([self.data[i,:,:,k] for i in range(self.data.shape[0])])
         self.abs_diff = absolute_difference_Ed_ES(patient_id, self.middle_slice)
-        self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
+        try:
+            self.gt1 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
+        except:
+            self.gt1 = tio.ScalarImage(f"../database/testing/patient{patient_id}/patient{patient_id}_frame01_gt.nii.gz").data.numpy()
         #self.gt2 = tio.ScalarImage(f"../database/training/patient{patient_id}/patient{patient_id}_frame12_gt.nii.gz").data.numpy()
         self.mean_dice = None
         self.dtype = self.data.dtype
@@ -172,7 +186,7 @@ def patient_info(patient_id):
     if int(patient_id) < 101:
         filename = f"../database/training/patient{patient_id}/Info.cfg"
     elif 100 <int(patient_id) < 151:
-        image = f"../database/testing/patient{patient_id}/Info.cfg"
+        filename = f"../database/testing/patient{patient_id}/Info.cfg"
     else:
         print("Patient ID must be between 001 and 150.")
         return
@@ -300,7 +314,7 @@ def step_1(irm,show=False,filtered=False):
     center_y,center_x=irm.seed_points[(t_ED,middle_slice_index)] """
     middle_slice_index = irm.middle_slice
 
-    values = new_hough(irm,show=True)
+    values = new_hough(irm,radius_data,show=True)
     x = np.median([val[0] for val in values])
     y = np.median([val[1] for val in values])
     initial_seed_point = [(int(x),int(y))]
@@ -487,6 +501,8 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_nei
     #mask = mp.disk(1)
     region = close(working_set,region,np.ones((8,8)))
     region = dilate(working_set,region,mask)
+    region = dilate(working_set,region,mask)
+    region = dilate(working_set,region,mask)
 
     region = np.array(region)
     
@@ -619,7 +635,7 @@ def metrics(irm, e=None,show = False,write=True):
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     if write:
         try:
-            with open('bin.json', "r") as file:
+            with open('logs.json', "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
@@ -629,8 +645,9 @@ def metrics(irm, e=None,show = False,write=True):
         data[str(id)] = tmp_data
 
         # Réécrire le fichier JSON avec les nouvelles données
-        with open('bin.json', "w") as file:
+        with open('logs.json', "w") as file:
             json.dump(data, file, indent=4)
+    print(f"Mean dice coefficient for patient {id}: {mean}")
     return mean
     
 
@@ -718,20 +735,11 @@ working_set = (cv2.bilateralFilter(image_32f, 2, 75, 200) > 30).astype(np.uint8)
 # Application de la fermeture (dilatation suivie d'une érosion)
 #closed_image = cv2.morphologyEx(working_set, cv2.MORPH_CLOSE, kernel)
 
-def get_window(image,w=75):
-    region = []
-    for x in range(image.shape[0]):
-        for y in range(image.shape[1]):
-            region.append((x,y))
-    total_intensity = sum([image[couple[0], couple[1]] for couple in region])
-    x = sum([couple[0] * image[couple[0], couple[1]] for couple in region]) / total_intensity
-    y = sum([couple[1] * image[couple[0], couple[1]] for couple in region]) / total_intensity
-    x = int(x)
-    y = int(y)
+def get_window(image,x,y,w=35):
     windowed = image[x-w:x+w,y-w:y+w]
-    plt.imshow(windowed)
-    plt.show()
-    return windowed,(x,y)
+    """ plt.imshow(windowed)
+    plt.show() """
+    return windowed
 
 
 
@@ -756,58 +764,112 @@ def find_indices_within_range(lst, percent, epsilon):
     else:
         return None, None  # Aucun élément trouvé dans la plage
     
-def hough(closed_image,rayons_test,barycentre=None,thickness=1):
+
+def get_barycentre(grayscale_image):
+    """
+    Calcule le barycentre d'une image en niveaux de gris.
+
+    Parameters:
+        grayscale_image (numpy.ndarray): Image en niveaux de gris.
+
+    Returns:
+        tuple: Coordonnées (x_barycentre, y_barycentre).
+    """
+    # Vérifier si l'image est vide (tous les pixels à 0)
+    if np.sum(grayscale_image) == 0:
+        return None
+
+    # Créer une grille de coordonnées
+    y_indices, x_indices = np.indices(grayscale_image.shape)
+
+    # Calculer les coordonnées pondérées par l'intensité des pixels
+    total_intensity = np.sum(grayscale_image)
+    x_barycentre = np.sum(x_indices * grayscale_image) / total_intensity
+    y_barycentre = np.sum(y_indices * grayscale_image) / total_intensity
+
+    return y_barycentre, x_barycentre
+
+
+def hough(closed_image, rayons_test,r_med,bar, thickness=1):
     shape = closed_image.shape
-    ima_intens=np.zeros((len(rayons_test),shape[0],shape[1]))
-    i=0
-    print(rayons_test)
-    for r in rayons_test:
-        for a in range(closed_image.shape[0]):
-            for b in range(closed_image.shape[1]):
-                if closed_image[a,b]==255:
-                    mask=np.zeros(closed_image.shape)
-                    cv2.circle(mask,(b,a),r,255,thickness)
-                    ima_intens[i][mask==255]+=1 
-        i+=1
+    # Initialisation de l'image d'accumulation
+    ima_intens = np.zeros((len(rayons_test), shape[0], shape[1]))
+    #print(f"Rayons testés : {rayons_test}")
 
-    r_ind,x,y = np.unravel_index(np.argmax(ima_intens),ima_intens.shape)
-    print(f"Le rayon trouvé est :{rayons_test[r_ind]}")
-    return x,y
+    # Récupération des coordonnées des points d'intérêt (pixels blancs)
+    points = np.column_stack(np.where(closed_image == 255))
 
-def new_hough(irm,barycentre=None,thickness=1,show = False):
+    for i, r in enumerate(rayons_test):
+        if r < 1:
+            pass
+        for a, b in points:
+            mask = np.zeros(shape, dtype=np.uint8)
+            # Tracer un cercle autour du point (b, a) avec le rayon r
+            cv2.circle(mask, (b, a), r, 255, thickness)
+            #ima_intens[i][mask == 255] += 1 *np.exp(-(r-r_med)**2/(2*var))
+            ima_intens[i][mask == 255] += 1/(1+r/2)/(np.sqrt((a-bar[0])**2+(b-bar[1])**2)+1)
+
+    # Trouver le maximum dans l'accumulateur
+    r_ind, x, y = np.unravel_index(np.argmax(ima_intens), ima_intens.shape)
+    r = rayons_test[r_ind]
+    #print(f"Le rayon trouvé est : {r} et le rayon médian est : {r_med}")
+    #print(f"Le centre est aux coordonnées ({x}, {y}).")
+    return x, y, r
+
+def new_hough(irm,data, thickness=1, show=False):
     N = irm.data.shape[-1]
     values = []
-    epsilon=0.1
-    try:
-        with open('rayons_opti.json', "r") as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        pass
+    epsilon = 0.05
+    x_padd = irm.data.shape[1] / 10
+    y_padd = irm.data.shape[2] / 10
+
+    data_percents = data["x"]
+    data_rayons = data["y"]
+
+    abs = np.abs(irm.data[irm.t_ED, :, :, 0] - irm.data[irm.t_ES, :, :, 0]).astype('uint8')
+    abs = cv2.bilateralFilter(abs, 3, 75, 200)
+    #abs = cv2.GaussianBlur(abs, (5, 5), 0)
+    working_set = abs.astype('uint8')
+
+    x_bar, y_bar = get_barycentre(working_set)
+
+    pixel_2 = abs.shape[0]*abs.shape[1]
+
+
     for slices in range(N):
-        percent=slices/N
-        data_percents=data["x"]
-        data_rayons=data["y"]
-        ind_min,ind_max=find_indices_within_range(data_percents,percent,epsilon)
-        rayons_utiles=data_rayons[ind_min:ind_max]
-        r_min=min(rayons_utiles)
-        r_max=max(rayons_utiles)+10
-        r_mean=np.mean(rayons_utiles)
-        variance=np.std(rayons_utiles)
-        # Étape 1 : Générer des rayons autour de r_mean avec des pas fins
-        step_fine = 1  # Pas fin
-        fine_range = range(max(r_min, int(r_mean - 2 * np.sqrt(variance))), 
-                        min(r_max, int(r_mean + 2 * np.sqrt(variance))) + 1, step_fine)
+        percent = slices / N
+        #print(f"Processing percent {percent}.")
 
-        # Étape 2 : Ajouter des rayons dans les zones éloignées avec des pas plus larges
-        step_coarse = 3  # Pas large
-        coarse_range = range(r_min, r_max + 1, step_coarse)
+        # Récupérer les indices des rayons pertinents
+        ind_min, ind_max = find_indices_within_range(data_percents, percent, epsilon)
+        rayons_utiles = data_rayons[ind_min:ind_max]
+        rayons_utiles = np.array(rayons_utiles)
+        rayons_utiles = np.round(np.sqrt(rayons_utiles*pixel_2)).astype(int)
+        #print(f"Rayons utiles : {rayons_utiles}")
+        if len(rayons_utiles) == 0: 
+            continue  # Ignorer si aucun rayon pertinent
 
-        # Combiner les deux ensembles de rayons
-        rayons_test = sorted(set(fine_range).union(coarse_range))
+        r_min, r_max = min(rayons_utiles), max(rayons_utiles) + 10
+        r_mean = np.mean(rayons_utiles)
+        r_median = np.median(rayons_utiles)
+        variance = np.std(rayons_utiles)
+        #print(variance)
 
-        abs = np.abs(irm.data[irm.t_ED,:,:,slices]-irm.data[irm.t_ES,:,:,slices]).astype('uint8')
+
+        # Générer des rayons avec des pas adaptés
+        rayons_test = sorted(set(range(r_min, r_max + 1, 3)) | 
+                             set(range(max(r_min, int(r_mean - 2 * np.sqrt(variance))),
+                                       min(r_max, int(r_mean + 2 * np.sqrt(variance))) + 1, 1)))
+
+        # Prétraitement de l'image
+        abs = np.abs(irm.data[irm.t_ED, :, :, slices] - irm.data[irm.t_ES, :, :, slices]).astype('uint8')
         abs = cv2.bilateralFilter(abs, 3, 75, 200)
-        working_set = abs.astype('uint8')
+        #abs = cv2.GaussianBlur(abs, (3, 3), 0)
+        roi = get_window(abs, int(x_bar), int(y_bar))
+        working_set = roi.astype('uint8')
+
+
+        # Détection des contours avec Canny
         std = np.std(working_set)
         if std < 10:
             lowThresh = 15*std
@@ -815,28 +877,35 @@ def new_hough(irm,barycentre=None,thickness=1,show = False):
             lowThresh = 20*std
         else:
             lowThresh = 15*std
-        edges = cv2.Canny(working_set, lowThresh/1.5, 2*lowThresh)
+        
+        edges = cv2.Canny(working_set, lowThresh/1.5, lowThresh*2)
         nb_non_zero = np.count_nonzero(edges)
-        if nb_non_zero < 250:
+        while nb_non_zero < 250:
             #print(f"Slice {slices} has {nb_non_zero}pxs.")
-            lowThresh = lowThresh/2
+            lowThresh = lowThresh-15
             edges = cv2.Canny(working_set, lowThresh, lowThresh*3)
             nb_non_zero = np.count_nonzero(edges)
-        """ while nb_non_zero > 2800:
-            #print(f"Slice {slices} has {nb_non_zero}pxs.")
-            lowThresh = lowThresh*1.5
-            edges = cv2.Canny(working_set, lowThresh, lowThresh*2)
-            nb_non_zero = np.count_nonzero(edges) """
-        x,y = hough(edges,rayons_test)
-        values.append((x,y))
+
+        # Appel à hough
+        x2, y2, r = hough(edges, rayons_test,r_median, (x_bar, y_bar))
+        x = x2 + int(x_bar) - 35
+        y = y2 + int(y_bar) - 35
+
+        # Vérification de la distance
+        
+        if np.sqrt((x - x_bar) ** 2 + (y - y_bar) ** 2) <= np.sqrt(x_padd ** 2 + y_padd ** 2):
+            values.append((x, y))
         if show:
             plt.figure()
             plt.scatter(y,x, color='red')
-            plt.imshow(working_set,cmap='gray')
+            plt.scatter(y_bar,x_bar, color='blue')
+            plt.imshow(abs,cmap='gray')
             plt.title(f"{nb_non_zero} pixels in slice {slices}")
             plt.figure()
-            plt.scatter(y,x, color='red')
+            plt.scatter(y2,x2, color='red')
             plt.imshow(edges, cmap='gray')
+            circle = plt.Circle((y2, x2), r, color='red', fill=False)
+            plt.gca().add_patch(circle)
             plt.show()
     return values
 

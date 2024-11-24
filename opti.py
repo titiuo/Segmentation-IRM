@@ -28,8 +28,10 @@ def get_rayon(img):
 
     # Estimer le rayon comme la moyenne des distances (ou médiane pour plus de robustesse)
     rayon = np.mean(distances)  # ou np.median(distances)
-    print(f"Rayon estimé : {rayon:.2f} pixels")
-    return int(rayon)
+    pixels_2 = img.shape[0] * img.shape[1] 
+    rayon = rayon**2 / pixels_2
+    print(f"Rayon estimé : {rayon} pixels")
+    return rayon
 
 
 
