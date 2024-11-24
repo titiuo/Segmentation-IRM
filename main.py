@@ -28,9 +28,10 @@ def run(start,r=5):
 
 
 if __name__ == '__main__':
-    irm = Irm('001')
-    step_1(irm, filtered=True, show=True)
-    """ for id in Dcm_patients:
+    """ irm = Irm('001')
+    step_1(irm, filtered=True, show=False)
+    print(metrics(irm, show=False, write=False)) """
+    for id in Dcm_patients:
         irm=Irm(id)
         step_1(irm, filtered=True, show=False)
         metrics(irm, show=False, write=True)
@@ -54,11 +55,12 @@ if __name__ == '__main__':
         irm=Irm(id)
         step_1(irm, filtered=True, show=False)
         metrics(irm, show=False, write=True)
-        print("\n\n ---------------------------------------- \n\n")"""
-    """ for id in Rv_patients:
+        print("\n\n ---------------------------------------- \n\n)")
+    for id in Rv_patients:
         irm = Irm(id)
+        step_1(irm, filtered=True, show=False)
+        metrics(irm, show=False, write=True)
         print("\n\n ---------------------------------------- \n\n")
-        print(f"Processing image {id}...\n\n") """
 
 """         try:
             step_1(irm, filtered=True, show=False)

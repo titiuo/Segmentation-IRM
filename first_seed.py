@@ -83,8 +83,8 @@ def main(irm,show='False'):
         return True
     
 if __name__ == '__main__':
-    irm = Irm("065")
-    main(irm,show='True')
+    """ irm = Irm("065")
+    main(irm,show='True') """
     """ count = 0
     for id in Dcm_patients:
         irm = Irm(id)

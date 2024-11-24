@@ -333,7 +333,7 @@ def step_1(irm,show=False,filtered=False):
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
     while to_process:
         current_time, current_slice = to_process.pop(0)
-        print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
+        #print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
         image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,threshold=30,filtered=filtered, nb_neighbours=4)
 
 
@@ -353,7 +353,7 @@ def step_1(irm,show=False,filtered=False):
 
         #min_energy_pixel = get_next_seed()
         min_energy_pixel = barycentre(irm,current_time, current_slice, region)
-        print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
+        #print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
         irm.seed_points[(current_time,current_slice)]=min_energy_pixel
         center_x,center_y=min_energy_pixel
         image_segmented[center_y,center_x] = [255,0,0]
@@ -442,7 +442,7 @@ def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
     print(f'Number of pixels in the region: {len(region)} for s = {s}')
     return image_rgb,region
 
-def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_neighbours=8):
+def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=False, nb_neighbours=8):
     s = 0.56
     """ if filtered:
         working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
@@ -500,9 +500,8 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_nei
     mask = [[0,1,0],[1,1,1],[0,1,0]]
     #mask = mp.disk(1)
     region = close(working_set,region,np.ones((8,8)))
-    region = dilate(working_set,region,mask)
-    region = dilate(working_set,region,mask)
-    region = dilate(working_set,region,mask)
+    for k in range(Nb_dilate):
+        region = dilate(working_set,region,mask)    
 
     region = np.array(region)
     
@@ -520,7 +519,6 @@ def region_growing_adaptive(irm, t,x ,y ,z, threshold=20, filtered=False, nb_nei
     np.column_stack(np.where(image > 0))
     
     new_region = np.column_stack(np.where(image > 0))
-
 
     region = np.array([(y, x) for x, y,z in new_region.tolist()])
     
@@ -895,7 +893,7 @@ def new_hough(irm,data, thickness=1, show=False):
         
         if np.sqrt((x - x_bar) ** 2 + (y - y_bar) ** 2) <= np.sqrt(x_padd ** 2 + y_padd ** 2):
             values.append((x, y))
-        if show:
+        """ if show:
             plt.figure()
             plt.scatter(y,x, color='red')
             plt.scatter(y_bar,x_bar, color='blue')
@@ -906,7 +904,7 @@ def new_hough(irm,data, thickness=1, show=False):
             plt.imshow(edges, cmap='gray')
             circle = plt.Circle((y2, x2), r, color='red', fill=False)
             plt.gca().add_patch(circle)
-            plt.show()
+            plt.show() """
     return values
 
 
