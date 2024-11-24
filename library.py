@@ -331,17 +331,18 @@ def step_1(irm,show=False,filtered=False):
 
     #irm.images_processed.append(tmp)
     to_process=[(t_ED,middle_slice_index),(t_ED,middle_slice_index+1),(t_ED,middle_slice_index-1)]
+    memo = [(t_ED,middle_slice_index)]
     while to_process:
+        #print(to_process)
         current_time, current_slice = to_process.pop(0)
+        memo.append((current_time,current_slice))
+        center_x,center_y = irm.seed_points[(current_time,current_slice)]
         #print(f"Processing time {current_time}, slice {current_slice} for id : {irm.patient_id}.")
-        image_segmented,region = region_growing_adaptive(irm,current_time,center_y,center_x,current_slice,threshold=30,filtered=filtered, nb_neighbours=4)
+        image_segmented,region = region_growing_adaptive(irm,current_time,center_x,center_y,current_slice,threshold=30,filtered=filtered, nb_neighbours=4)
 
 
-        image_segmented[center_y,center_x] = [0,0,255]
-        image_segmented[center_y,center_x+1] = [0,0,255]
-        image_segmented[center_y+1,center_x] = [0,0,255]
-        image_segmented[center_y,center_x-1] = [0,0,255]
-        image_segmented[center_y-1,center_x] = [0,0,255]
+        image_segmented[center_x,center_y] = [0,0,255]
+    
 
         temporary_dictionnary[(current_time,current_slice)] = image_segmented
     
@@ -351,19 +352,33 @@ def step_1(irm,show=False,filtered=False):
             #print(mean)
             continue """
 
-        #min_energy_pixel = get_next_seed()
+        
         min_energy_pixel = barycentre(irm,current_time, current_slice, region)
-        #print(f"New seed point: {min_energy_pixel} for slice: {current_slice}.")
-        irm.seed_points[(current_time,current_slice)]=min_energy_pixel
-        center_x,center_y=min_energy_pixel
-        image_segmented[center_y,center_x] = [255,0,0]
-        #tmp = set_pixel_red(data[current_time,:,:,current_slice], min_energy_pixel[0], min_energy_pixel[1])
+        #print(f"New barycentre: {min_energy_pixel} for slice: {current_slice}.")
+
         
         #irm.images_processed.append(tmp)
-        if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in irm.seed_points:
+        if current_slice+1<data.shape[-1] and (current_time,current_slice+1) not in memo and (current_time,current_slice+1) not in to_process:
             to_process.append((current_time,current_slice+1))
-        if current_slice-1>=0 and (current_time,current_slice-1) not in irm.seed_points:
+        if current_slice-1>=0 and (current_time,current_slice-1) not in memo and (current_time,current_slice-1) not in to_process:
             to_process.append((current_time,current_slice-1))
+
+
+        if current_slice == middle_slice_index:
+            irm.seed_points[(current_time,current_slice+1)]=min_energy_pixel
+            irm.seed_points[(current_time,current_slice-1)]=min_energy_pixel
+            #print(f"Next seed point: {min_energy_pixel} for slice: {current_slice+1}.")
+
+        elif 0<current_slice<middle_slice_index:
+            irm.seed_points[(current_time,current_slice-1)]=min_energy_pixel
+            #print(f"Next seed point: {min_energy_pixel} for slice: {current_slice-1}.")
+        elif current_slice>middle_slice_index:
+            irm.seed_points[(current_time,current_slice+1)]=min_energy_pixel
+            #print(f"Next seed point: {min_energy_pixel} for slice: {current_slice+1}.")
+
+        image_segmented[min_energy_pixel[0],min_energy_pixel[1]] = [255,0,0]
+
+
     for k in range(irm.data.shape[-1]):
         irm.images_processed.append(temporary_dictionnary[(t_ED,k)])
     if show:
@@ -443,25 +458,10 @@ def region_growing(irm, t,x ,y ,z, threshold=20, filtered=False):
     return image_rgb,region
 
 def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=False, nb_neighbours=8):
-    s = 0.56
-    """ if filtered:
-        working_set = filtre_lineaire(irm.data[t,:,:,z],ker_gau(s))
-    else:
-        working_set = irm.data[t,:,:,z] """
     # Convert the image to 32-bit float format
     if filtered:
         image_32f = irm.data[t,:,:,z].astype(np.float32)
         working_set = cv2.bilateralFilter(image_32f, 15, 50, 60)
-
-        """ fig, axs = plt.subplots(1, 2, figsize=(15, 5))
-        axs[0].imshow(image_32f, cmap='gray')
-        axs[0].set_title('Original Image')
-        axs[0].axis('off')
-
-        axs[1].imshow(working_set, cmap='gray')
-        axs[1].set_title('Bilateral Filtered Image')
-        axs[1].axis('off')
-        plt.show() """
 
     else:
         working_set = irm.data[t,:,:,z]
@@ -478,7 +478,6 @@ def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=F
             explored = []
             edge= []
             region=[(initial_x,initial_y)]
-            #print("Too many iterations. Threshold is too high.")
             threshold-=1
         x,y = to_explore.pop(0)
         if not -1< x < irm.data.shape[1] or not -1< y < irm.data.shape[2]:
@@ -525,20 +524,20 @@ def region_growing_adaptive(irm, t,x ,y ,z, Nb_dilate=1,threshold=20, filtered=F
     
 
     #region = dilate(region)
-    """ print(np.min(image_processed), np.max(image_processed)) """
     if image_processed.dtype == 'float32':
         image_processed = 255 * (image_processed - np.min(image_processed)) / (np.max(image_processed) - np.min(image_processed))
         image_processed = image_processed.astype(np.uint8)
     image_rgb = np.stack((image_processed,)*3, axis=-1)
-    """ for couple in edge:
-        image_rgb[couple[0],couple[1]] = [255,0,0]  """
     for couple in region:
         try:
             image_rgb[couple[0],couple[1]] = [0,128,0]
         except:
             pass
-    #print(f'Number of pixels in the region: {len(region)} for s = {s}')
-    return image_rgb,region
+    print(f"This is the threshold: {threshold} for slice {z}.")
+    return image_rgb,region 
+
+
+
 
 def barycentre(irm, t, z, region):
     A = np.zeros((irm.data.shape[1], irm.data.shape[2]))
@@ -566,7 +565,7 @@ def barycentre(irm, t, z, region):
     plt.show() """
 
     #print(f"Barycentre: ({y}, {x})")
-    return (int(y), int(x))
+    return (int(x), int(y))
 
 
 def binary(image):
@@ -633,7 +632,7 @@ def metrics(irm, e=None,show = False,write=True):
         tmp_data[f"Mean dice coefficient:"] = f"{mean}"
     if write:
         try:
-            with open('logs.json', "r") as file:
+            with open('bin.json', "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
         # Si le fichier n'existe pas, initialiser un tableau vide
@@ -643,7 +642,7 @@ def metrics(irm, e=None,show = False,write=True):
         data[str(id)] = tmp_data
 
         # Réécrire le fichier JSON avec les nouvelles données
-        with open('logs.json', "w") as file:
+        with open('bin.json', "w") as file:
             json.dump(data, file, indent=4)
     print(f"Mean dice coefficient for patient {id}: {mean}")
     return mean
