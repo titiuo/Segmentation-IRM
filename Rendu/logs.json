@@ -1012,15 +1012,15 @@
         "Group": "NOR"
     },
     "078": {
-        "Dice coefficient for slice 0": "0.9627641730962764",
-        "Dice coefficient for slice 1": "0.9626474442988204",
-        "Dice coefficient for slice 2": "0.9311208515967438",
-        "Dice coefficient for slice 3": "0.9490445859872612",
-        "Dice coefficient for slice 4": "0.9386281588447654",
-        "Dice coefficient for slice 5": "0.9603004291845494",
-        "Dice coefficient for slice 6": "0.9308176100628931",
-        "Dice coefficient for slice 7": "0.8722466960352423",
-        "Mean dice coefficient:": "0.938446243638319",
+        "Dice coefficient for slice 0": "0.0001812842173960335",
+        "Dice coefficient for slice 1": "0.0006159866657004131",
+        "Dice coefficient for slice 2": "0.0016316762754269552",
+        "Dice coefficient for slice 3": "0.0018464212012599109",
+        "Dice coefficient for slice 4": "0.0030728630045369918",
+        "Dice coefficient for slice 5": "0.0010492799768434763",
+        "Dice coefficient for slice 6": "0.0006517016654598117",
+        "Dice coefficient for slice 7": "0.00242113251183464",
+        "Mean dice coefficient:": "0.001433793189807279",
         "Group": "NOR"
     },
     "079": {
@@ -1349,5 +1349,31 @@
         "Dice coefficient for slice 7": "0.0",
         "Mean dice coefficient:": "0.7843361282997464",
         "Group": "RV"
+    },
+    "123": {
+        "Dice coefficient for slice 0": "0.0",
+        "Dice coefficient for slice 1": "0.9462759462759462",
+        "Dice coefficient for slice 2": "0.8118678354686446",
+        "Dice coefficient for slice 3": "0.8823529411764706",
+        "Dice coefficient for slice 4": "0.8794137241838774",
+        "Dice coefficient for slice 5": "0.7923015236567763",
+        "Dice coefficient for slice 6": "0.9018567639257294",
+        "Dice coefficient for slice 7": "0.9096989966555183",
+        "Mean dice coefficient:": "0.7654709664178704",
+        "Group": "NOR"
+    },
+    "112": {
+        "Dice coefficient for slice 0": "0.9256559766763849",
+        "Dice coefficient for slice 1": "0.8797490414778668",
+        "Dice coefficient for slice 2": "0.9554716981132075",
+        "Dice coefficient for slice 3": "0.945491943777854",
+        "Dice coefficient for slice 4": "0.908499095840868",
+        "Dice coefficient for slice 5": "0.909556938850238",
+        "Dice coefficient for slice 6": "0.8594687232219366",
+        "Dice coefficient for slice 7": "0.8219954648526077",
+        "Dice coefficient for slice 8": "0.6391959798994975",
+        "Dice coefficient for slice 9": "0.43037974683544306",
+        "Mean dice coefficient:": "0.8275464609545903",
+        "Group": "MINF"
     }
 }
