@@ -1,5 +1,5 @@
 # 3D and 3D+t Images: Segmentation of Cardiac MRI
-This project, part of my studies in Imaging at Télécom Paris, focuses on the segmentation of the left ventricle in cardiac MRI images from 150 patients. The goal is to apply fundamental image processing techniques without using AI to extract and analyze relevant anatomical structures. This project is a collaboration with my partner, @Mamannne, and together, we explore essential techniques in medical image analysis.  
+This project, part of my studies in Imaging at Télécom Paris, focuses on the segmentation of the left ventricle in cardiac MRI images from 150 patients. The goal is to apply fundamental image processing techniques without using AI to extract and analyze relevant anatomical structures. This project is a collaboration with my partner, [Mamannne](https://github.com/Mamannne), and together, we explore essential techniques in medical image analysis.  
 ## **Project Objective**
 
 ## **Studied Population**
