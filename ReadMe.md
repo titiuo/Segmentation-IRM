@@ -16,5 +16,6 @@ The target population for this study consists of 150 patients divided into 5 sub
   (right ventricular cavity volume > 110 mL/m² or right ventricular ejection fraction < 40%) – **RV**
 
 ## **File Structure and Explanation**
-A research paper on the topic is available in French under the name [Final_Report.pdf](./Final_Report.pdf), along with a "Projet" folder containing the necessary resources for the project, including data, scripts, and documentation.
+A research paper on the topic is available in French under the name [Final_Report.pdf](./Final_Report.pdf), along with a [Project](./) folder containing a `main.ipynb` file where the code and usage examples can be found, a `logs.json` file providing the DICE results for the 100 training patients, and two other JSON files that help optimize the computation time, as explained in the final report.
+
 
