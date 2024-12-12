@@ -1,7 +1,7 @@
 # 3D and 3D+t Images: Segmentation of Cardiac MRI
 This project, part of my studies in Imaging at Télécom Paris, focuses on the segmentation of the left ventricle in cardiac MRI images from 150 patients. The goal is to apply fundamental image processing techniques without using AI to extract and analyze relevant anatomical structures. This project is a collaboration with my partner, [Mamannne](https://github.com/Mamannne), and together, we explore essential techniques in medical image analysis.  
 ## **Project Objective**
-
+Certain pathologies leading to heart failure cause remodeling of the heart. This is due to the myocardium's response to the various insults occurring during these syndromes. An important point in computer-assisted diagnosis is the segmentation of cardiac anatomy to simplify the analysis of the heart's structure. The objective of our project is the segmentation of the left ventricle cavity on MRI data from each patient.
 ## **Studied Population**
 
 The target population for this study consists of 150 patients divided into 5 subgroups as follows:
